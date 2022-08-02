@@ -6,8 +6,10 @@ import static com.google.android.exoplayer2.Player.STATE_IDLE;
 import static com.google.android.exoplayer2.Player.STATE_READY;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_ERROR;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_SUCCESS;
+import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_HIDE_SYSTEM_UI;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDIA_RESOURCE;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDIA_RESOURCE_TYPE;
+import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDIA_START_TIME;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -44,9 +46,13 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private final Player.Listener playbackStateListener;
     private final String mMediaResourceType = "";
 
+    public Long mIsWantToPlayerContinue = 0L;
+    public Boolean mIsWantToHideSystemUI = false;
+
     public static final String DEFAULT_FILEPATH = "file://";
 
     public String mResource = "";
+    public String mStartTime = "";
     public Boolean mIsMediaResourceTypeFile = false;
 
     private final static String LOG_TAG = "MediaPlayerActivity";
@@ -66,8 +72,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
         Bundle extraParam = getIntent().getExtras();
 
-
         mResource = extraParam.getString(PARAM_MEDIA_RESOURCE);
+        mStartTime = extraParam.getString(PARAM_MEDIA_START_TIME);
+
+        mIsWantToPlayerContinue = extraParam.getLong(PARAM_MEDIA_START_TIME,0L);
+        mIsWantToHideSystemUI = extraParam.getBoolean(PARAM_HIDE_SYSTEM_UI,false);
+
         mIsMediaResourceTypeFile = extraParam.getBoolean(PARAM_MEDIA_RESOURCE_TYPE);
 
         binding = ActivityPlayerBinding.inflate(getLayoutInflater());
@@ -76,8 +86,16 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        if (mIsWantToHideSystemUI){
+            hideSystemUi();
+        }
+
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
-            initializePlayer(mResource);
+            if (mIsWantToPlayerContinue > 0 ) {
+                initializePlayer(mResource, mIsWantToPlayerContinue);
+            } else {
+                initializePlayer(mResource);
+            }
         }
         super.onStart();
     }
@@ -105,21 +123,17 @@ public class MediaPlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
 
-        hideSystemUi();
-        if (Util.SDK_INT <= 23 || mExoPlayer == null) {
-            initializePlayer(mResource);
-
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //Do your work
-                    Log.d(LOG_TAG, "::::::::::::::::::::::::::::::::::::" + mExoPlayer.getCurrentPosition() / 1000);
-                }
-            },1000);
+        if (mIsWantToHideSystemUI){
+            hideSystemUi();
         }
 
-
+        if (Util.SDK_INT <= 23 || mExoPlayer == null) {
+            if (mIsWantToPlayerContinue > 0 ) {
+                initializePlayer(mResource, mIsWantToPlayerContinue);
+            } else {
+                initializePlayer(mResource);
+            }
+        }
 
         super.onResume();
     }
@@ -155,6 +169,29 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mExoPlayer.addListener(playbackStateListener());
         mExoPlayer.addListener(playErrorException());
 
+        mExoPlayer.prepare();
+    }
+
+
+    private void initializePlayer(String mediaResource, Long setStartTime) {
+        mExoPlayer = new ExoPlayer.Builder(this)
+                .build();
+
+        MediaItem mediaItem = null;
+        binding.videoView.setPlayer(mExoPlayer);
+
+        if ( mIsMediaResourceTypeFile ) {
+            mediaItem = MediaItem.fromUri(DEFAULT_FILEPATH + mediaResource);
+        } else {
+            mediaItem = MediaItem.fromUri(mediaResource);
+        }
+
+        mExoPlayer.setMediaItem(mediaItem,setStartTime);
+        mExoPlayer.setPlayWhenReady(mPlayWhenReady);
+        mExoPlayer.seekTo(mCurrentItem, mPlaybackPosition);
+        mExoPlayer.addAnalyticsListener(new EventLogger());
+        mExoPlayer.addListener(playbackStateListener());
+        mExoPlayer.addListener(playErrorException());
 
         mExoPlayer.prepare();
     }
@@ -181,6 +218,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
             jsonMediaInfoObject.put("duration",duration);
             jsonMediaInfoObject.put("currentPosition",currentPosition);
+
             mMediaPlayerObject.send(CODE_SUCCESS,jsonMediaInfoObject);
         }
         mExoPlayer = null;
@@ -239,21 +277,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
             }
         };
     }
-
-
-
-
-
-
-
-
-
-//    private void getCurrentPlayerPosition(ExoPlayer player, PlayerView playerView) {
-//        Log.d("TAG", "current pos: " + player.getCurrentPosition());
-//        if (player.isPlaying()) {
-//            playerView.postDelayed();
-//        }
-//    }
 
 
 
