@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tobesoft.plugin.mediaplayerobject">
+
+    <application>
+        <activity
+            android:name=".MediaPlayerActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:theme="@style/PlayerTheme"
+            android:exported="true">
+        </activity>
+    </application>
+
+</manifest>
