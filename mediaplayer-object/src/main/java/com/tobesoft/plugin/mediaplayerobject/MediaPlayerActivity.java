@@ -1,16 +1,17 @@
 package com.tobesoft.plugin.mediaplayerobject;
 
-import static androidx.core.content.PackageManagerCompat.LOG_TAG;
 import static com.google.android.exoplayer2.Player.STATE_BUFFERING;
 import static com.google.android.exoplayer2.Player.STATE_ENDED;
 import static com.google.android.exoplayer2.Player.STATE_IDLE;
 import static com.google.android.exoplayer2.Player.STATE_READY;
+import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_ERROR;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDIA_RESOURCE;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDIA_RESOURCE_TYPE;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Patterns;
+import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
@@ -19,18 +20,14 @@ import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.upstream.FileDataSource;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 
 import com.tobesoft.plugin.mediaplayerobject.databinding.ActivityPlayerBinding;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class MediaPlayerActivity extends AppCompatActivity {
 
@@ -49,8 +46,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
     private final static String LOG_TAG = "MediaPlayerActivity";
 
-    public MediaPlayerActivity() {
+    public MediaPlayerObject mMediaPlayerObject = null;
+
+    public MediaPlayerActivity()
+    {
         this.playbackStateListener = playbackStateListener();
+        mMediaPlayerObject = MediaPlayerObject.getInstance();
     }
 
 
@@ -94,7 +95,10 @@ public class MediaPlayerActivity extends AppCompatActivity {
         hideSystemUi();
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
             initializePlayer(mResource);
+
         }
+
+
         super.onResume();
     }
 
@@ -122,9 +126,21 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mExoPlayer.setPlayWhenReady(mPlayWhenReady);
         mExoPlayer.seekTo(mCurrentItem, mPlaybackPosition);
         mExoPlayer.addAnalyticsListener(new EventLogger());
+
         mExoPlayer.addListener(playbackStateListener());
+        mExoPlayer.addListener(playErrorException());
+
 
         mExoPlayer.prepare();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do your work
+                long videoWatchedTime= mExoPlayer.getCurrentPosition()/1000;
+                Log.d(LOG_TAG, "::::::::::::::::::::::::::::"+videoWatchedTime);
+            }
+        },1000);
     }
 
     private void releasePlayer() {
@@ -139,6 +155,13 @@ public class MediaPlayerActivity extends AppCompatActivity {
             exoPlayer.release();
         }
         mExoPlayer = null;
+
+
+        Intent intentR = new Intent();
+        intentR.putExtra("sendText" , ""); //사용자에게 입력받은값 넣기
+        setResult(RESULT_OK,intentR); //결과를 저장
+        finish();
+
     }
 
     @SuppressLint("InlinedApi")
@@ -171,6 +194,26 @@ public class MediaPlayerActivity extends AppCompatActivity {
             }
         };
     }
+
+
+    private Player.Listener playErrorException() {
+        return new Player.Listener(){
+            @Override
+            public void onPlayerError(PlaybackException error) {
+                mMediaPlayerObject.send(CODE_ERROR,error);
+                Player.Listener.super.onPlayerError(error);
+            }
+        };
+    }
+
+
+//    private void getCurrentPlayerPosition(ExoPlayer player, PlayerView playerView) {
+//        Log.d("TAG", "current pos: " + player.getCurrentPosition());
+//        if (player.isPlaying()) {
+//            playerView.postDelayed();
+//        }
+//    }
+
 
 
 }

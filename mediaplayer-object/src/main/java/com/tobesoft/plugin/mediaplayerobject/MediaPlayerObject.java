@@ -38,12 +38,20 @@ public class MediaPlayerObject extends NexacroPlugin {
     MediaPlayerInterface mMediaPlayerInterface = null;
     Activity mActivity = null;
 
+    private static  MediaPlayerObject mMediaPlayerObject;
+
+    public static MediaPlayerObject getInstance() {
+        return mMediaPlayerObject;
+    }
+
     public MediaPlayerObject(String objectId) {
         super(objectId);
 
         mMediaPlayerInterface = (MediaPlayerInterface) NexacroActivity.getInstance();
         mMediaPlayerInterface.setMediaPlayerObject(this);
         mActivity = NexacroActivity.getInstance();
+
+        mMediaPlayerObject = this;
 
     }
 
