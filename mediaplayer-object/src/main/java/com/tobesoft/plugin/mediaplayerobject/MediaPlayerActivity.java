@@ -5,6 +5,7 @@ import static com.google.android.exoplayer2.Player.STATE_ENDED;
 import static com.google.android.exoplayer2.Player.STATE_IDLE;
 import static com.google.android.exoplayer2.Player.STATE_READY;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_ERROR;
+import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_SUCCESS;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDIA_RESOURCE;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDIA_RESOURCE_TYPE;
 
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -29,6 +31,9 @@ import com.google.android.exoplayer2.util.Util;
 
 import com.tobesoft.plugin.mediaplayerobject.databinding.ActivityPlayerBinding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MediaPlayerActivity extends AppCompatActivity {
 
     private ExoPlayer mExoPlayer = null;
@@ -37,7 +42,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private Long mPlaybackPosition = 0L;
     private ActivityPlayerBinding binding = null;
     private final Player.Listener playbackStateListener;
-    private String mMediaResourceType = "";
+    private final String mMediaResourceType = "";
 
     public static final String DEFAULT_FILEPATH = "file://";
 
@@ -79,13 +84,21 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        releasePlayer();
+        try {
+            releasePlayer();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        releasePlayer();
+        try {
+            releasePlayer();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
@@ -96,7 +109,16 @@ public class MediaPlayerActivity extends AppCompatActivity {
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
             initializePlayer(mResource);
 
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //Do your work
+                    Log.d(LOG_TAG, "::::::::::::::::::::::::::::::::::::" + mExoPlayer.getCurrentPosition() / 1000);
+                }
+            },1000);
         }
+
 
 
         super.onResume();
@@ -104,7 +126,11 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        releasePlayer();
+        try {
+            releasePlayer();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         super.onPause();
     }
 
@@ -126,24 +152,14 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mExoPlayer.setPlayWhenReady(mPlayWhenReady);
         mExoPlayer.seekTo(mCurrentItem, mPlaybackPosition);
         mExoPlayer.addAnalyticsListener(new EventLogger());
-
         mExoPlayer.addListener(playbackStateListener());
         mExoPlayer.addListener(playErrorException());
 
 
         mExoPlayer.prepare();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Do your work
-                long videoWatchedTime= mExoPlayer.getCurrentPosition()/1000;
-                Log.d(LOG_TAG, "::::::::::::::::::::::::::::"+videoWatchedTime);
-            }
-        },1000);
     }
 
-    private void releasePlayer() {
+    private void releasePlayer() throws JSONException {
 
         ExoPlayer exoPlayer = mExoPlayer;
 
@@ -152,15 +168,27 @@ public class MediaPlayerActivity extends AppCompatActivity {
             mCurrentItem = exoPlayer.getCurrentMediaItemIndex();
             mPlayWhenReady = exoPlayer.getPlayWhenReady();
             exoPlayer.removeListener(playbackStateListener());
+
+
+            String duration = String.valueOf(mExoPlayer.getDuration());
+            String currentPosition = String.valueOf(mExoPlayer.getCurrentPosition());
+
+            Log.d(LOG_TAG, "::::::::::::::::::::::::::::::::::::::::::::::::" + duration);
+            Log.d(LOG_TAG, "::::::::::::::::::::::::::::::::::::::::::::::::" + currentPosition);
             exoPlayer.release();
+
+            JSONObject jsonMediaInfoObject = new JSONObject();
+
+            jsonMediaInfoObject.put("duration",duration);
+            jsonMediaInfoObject.put("currentPosition",currentPosition);
+            mMediaPlayerObject.send(CODE_SUCCESS,jsonMediaInfoObject);
         }
         mExoPlayer = null;
 
-
-        Intent intentR = new Intent();
-        intentR.putExtra("sendText" , ""); //사용자에게 입력받은값 넣기
-        setResult(RESULT_OK,intentR); //결과를 저장
-        finish();
+//        Intent intentR = new Intent();
+//        intentR.putExtra("sendText" , ""); //사용자에게 입력받은값 넣기
+//        setResult(RESULT_OK,intentR); //결과를 저장
+//        finish();
 
     }
 
@@ -192,6 +220,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 }
                 Player.Listener.super.onPlaybackStateChanged(playbackState);
             }
+
+            @Override
+            public void onPlayerError(@NonNull PlaybackException error) {
+                mMediaPlayerObject.send(CODE_ERROR,error);
+                Player.Listener.super.onPlayerError(error);
+            }
         };
     }
 
@@ -199,12 +233,19 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private Player.Listener playErrorException() {
         return new Player.Listener(){
             @Override
-            public void onPlayerError(PlaybackException error) {
+            public void onPlayerError(@NonNull PlaybackException error) {
                 mMediaPlayerObject.send(CODE_ERROR,error);
                 Player.Listener.super.onPlayerError(error);
             }
         };
     }
+
+
+
+
+
+
+
 
 
 //    private void getCurrentPlayerPosition(ExoPlayer player, PlayerView playerView) {
