@@ -43,7 +43,7 @@ public class MediaPlayerObject extends NexacroPlugin {
     MediaPlayerInterface mMediaPlayerInterface = null;
     Activity mActivity = null;
 
-    private static  MediaPlayerObject mMediaPlayerObject;
+    private static MediaPlayerObject mMediaPlayerObject;
 
     public static MediaPlayerObject getInstance() {
         return mMediaPlayerObject;
@@ -88,20 +88,20 @@ public class MediaPlayerObject extends NexacroPlugin {
                     //String mediaStartTime = jsonObject.getString("mediaStartTime");
 
                     //jsonObject.optString의 경우 값이 없으면 두번쨰 파라미터의 값이 기본값으로 들어가게 된다.
-                    String mediaStartTime = jsonObject.optString("mediaStartTime","0");
-                    String hideSystemUI = jsonObject.optString("hideSystemUI","false");
+                    String mediaStartTime = jsonObject.optString("mediaStartTime", "0");
+                    String hideSystemUI = jsonObject.optString("hideSystemUI", "false");
 
-                    Log.d(LOG_TAG,mediaStartTime + " " + hideSystemUI );
+                    Log.d(LOG_TAG, mediaStartTime + " " + hideSystemUI);
 
                     if (Patterns.WEB_URL.matcher(mediaResource).matches()) {
                         if (!mediaResource.equals("")) {
-                            playByUrl(mediaResource,mediaStartTime,hideSystemUI);
+                            playByUrl(mediaResource, mediaStartTime, hideSystemUI);
                         } else {
                             send(CODE_ERROR, METHOD_CALLMETHOD + " : no Value for MediaPlayer Resource");
                         }
                     } else {
                         if (!mediaResource.equals("")) {
-                            playByFile(mediaResource,mediaStartTime,hideSystemUI);
+                            playByFile(mediaResource, mediaStartTime, hideSystemUI);
                         } else {
                             send(CODE_ERROR, METHOD_CALLMETHOD + " : no Value for MediaPlayer Resource");
                         }
@@ -121,12 +121,12 @@ public class MediaPlayerObject extends NexacroPlugin {
 
         extraParam.putString(PARAM_MEDIA_RESOURCE, urlPath);
         extraParam.putBoolean(PARAM_MEDIA_RESOURCE_TYPE, mIsMediaResourceTypeFile);
-        if (!mediaStartTime.equals("false")){
-            extraParam.putString(PARAM_MEDIA_START_TIME,mediaStartTime);
+        if (!mediaStartTime.equals("false")) {
+            extraParam.putString(PARAM_MEDIA_START_TIME, mediaStartTime);
         }
 
         if (Boolean.parseBoolean(hideSystemUI)) {
-            extraParam.putBoolean(PARAM_HIDE_SYSTEM_UI,true);
+            extraParam.putBoolean(PARAM_HIDE_SYSTEM_UI, true);
         }
 
         Intent intent = new Intent(mActivity, MediaPlayerActivity.class);
@@ -141,13 +141,13 @@ public class MediaPlayerObject extends NexacroPlugin {
         mIsMediaResourceTypeFile = true;
 
         extraParam.putString(PARAM_MEDIA_RESOURCE, filePath);
-        extraParam.putBoolean(PARAM_MEDIA_RESOURCE_TYPE,mIsMediaResourceTypeFile);
-        if (!mediaStartTime.equals("0")){
-            extraParam.putString(PARAM_MEDIA_START_TIME,mediaStartTime);
+        extraParam.putBoolean(PARAM_MEDIA_RESOURCE_TYPE, mIsMediaResourceTypeFile);
+        if (!mediaStartTime.equals("0")) {
+            extraParam.putString(PARAM_MEDIA_START_TIME, mediaStartTime);
         }
 
         if (Boolean.parseBoolean(hideSystemUI)) {
-            extraParam.putBoolean(PARAM_HIDE_SYSTEM_UI,true);
+            extraParam.putBoolean(PARAM_HIDE_SYSTEM_UI, true);
         }
 
         Intent intent = new Intent(mActivity, MediaPlayerActivity.class);

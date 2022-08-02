@@ -12,9 +12,7 @@ import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDI
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDIA_START_TIME;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,11 +24,9 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
-
 import com.tobesoft.plugin.mediaplayerobject.databinding.ActivityPlayerBinding;
 
 import org.json.JSONException;
@@ -43,8 +39,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private int mCurrentItem;
     private Long mPlaybackPosition = 0L;
     private ActivityPlayerBinding binding = null;
-    private final Player.Listener playbackStateListener;
-    private final String mMediaResourceType = "";
 
     public Long mIsWantToPlayerContinue = 0L;
     public Boolean mIsWantToHideSystemUI = false;
@@ -59,9 +53,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
     public MediaPlayerObject mMediaPlayerObject = null;
 
-    public MediaPlayerActivity()
-    {
-        this.playbackStateListener = playbackStateListener();
+    public MediaPlayerActivity() {
         mMediaPlayerObject = MediaPlayerObject.getInstance();
     }
 
@@ -75,8 +67,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mResource = extraParam.getString(PARAM_MEDIA_RESOURCE);
         mStartTime = extraParam.getString(PARAM_MEDIA_START_TIME);
 
-        mIsWantToPlayerContinue = extraParam.getLong(PARAM_MEDIA_START_TIME,0L);
-        mIsWantToHideSystemUI = extraParam.getBoolean(PARAM_HIDE_SYSTEM_UI,false);
+        mIsWantToPlayerContinue = extraParam.getLong(PARAM_MEDIA_START_TIME, 0L);
+        mIsWantToHideSystemUI = extraParam.getBoolean(PARAM_HIDE_SYSTEM_UI, false);
 
         mIsMediaResourceTypeFile = extraParam.getBoolean(PARAM_MEDIA_RESOURCE_TYPE);
 
@@ -86,12 +78,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        if (mIsWantToHideSystemUI){
+        if (mIsWantToHideSystemUI) {
             hideSystemUi();
         }
 
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
-            if (mIsWantToPlayerContinue > 0 ) {
+            if (mIsWantToPlayerContinue > 0) {
                 initializePlayer(mResource, mIsWantToPlayerContinue);
             } else {
                 initializePlayer(mResource);
@@ -123,12 +115,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
 
-        if (mIsWantToHideSystemUI){
+        if (mIsWantToHideSystemUI) {
             hideSystemUi();
         }
 
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
-            if (mIsWantToPlayerContinue > 0 ) {
+            if (mIsWantToPlayerContinue > 0) {
                 initializePlayer(mResource, mIsWantToPlayerContinue);
             } else {
                 initializePlayer(mResource);
@@ -156,10 +148,10 @@ public class MediaPlayerActivity extends AppCompatActivity {
         MediaItem mediaItem = null;
         binding.videoView.setPlayer(mExoPlayer);
 
-        if ( mIsMediaResourceTypeFile ) {
-             mediaItem = MediaItem.fromUri(DEFAULT_FILEPATH + mediaResource);
+        if (mIsMediaResourceTypeFile) {
+            mediaItem = MediaItem.fromUri(DEFAULT_FILEPATH + mediaResource);
         } else {
-             mediaItem = MediaItem.fromUri(mediaResource);
+            mediaItem = MediaItem.fromUri(mediaResource);
         }
 
         mExoPlayer.setMediaItem(mediaItem);
@@ -180,13 +172,13 @@ public class MediaPlayerActivity extends AppCompatActivity {
         MediaItem mediaItem = null;
         binding.videoView.setPlayer(mExoPlayer);
 
-        if ( mIsMediaResourceTypeFile ) {
+        if (mIsMediaResourceTypeFile) {
             mediaItem = MediaItem.fromUri(DEFAULT_FILEPATH + mediaResource);
         } else {
             mediaItem = MediaItem.fromUri(mediaResource);
         }
 
-        mExoPlayer.setMediaItem(mediaItem,setStartTime);
+        mExoPlayer.setMediaItem(mediaItem, setStartTime);
         mExoPlayer.setPlayWhenReady(mPlayWhenReady);
         mExoPlayer.seekTo(mCurrentItem, mPlaybackPosition);
         mExoPlayer.addAnalyticsListener(new EventLogger());
@@ -216,10 +208,10 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
             JSONObject jsonMediaInfoObject = new JSONObject();
 
-            jsonMediaInfoObject.put("duration",duration);
-            jsonMediaInfoObject.put("currentPosition",currentPosition);
+            jsonMediaInfoObject.put("duration", duration);
+            jsonMediaInfoObject.put("currentPosition", currentPosition);
 
-            mMediaPlayerObject.send(CODE_SUCCESS,jsonMediaInfoObject);
+            mMediaPlayerObject.send(CODE_SUCCESS, jsonMediaInfoObject);
         }
         mExoPlayer = null;
 
@@ -261,7 +253,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
             @Override
             public void onPlayerError(@NonNull PlaybackException error) {
-                mMediaPlayerObject.send(CODE_ERROR,error);
+                mMediaPlayerObject.send(CODE_ERROR, error);
                 Player.Listener.super.onPlayerError(error);
             }
         };
@@ -269,15 +261,14 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
 
     private Player.Listener playErrorException() {
-        return new Player.Listener(){
+        return new Player.Listener() {
             @Override
             public void onPlayerError(@NonNull PlaybackException error) {
-                mMediaPlayerObject.send(CODE_ERROR,error);
+                mMediaPlayerObject.send(CODE_ERROR, error);
                 Player.Listener.super.onPlayerError(error);
             }
         };
     }
-
 
 
 }
