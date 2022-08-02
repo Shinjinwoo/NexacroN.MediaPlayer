@@ -10,6 +10,7 @@ import com.nexacro.NexacroActivity;
 import com.nexacro.plugin.NexacroPlugin;
 import com.tobesoft.plugin.mediaplayerobject.plugininterface.MediaPlayerInterface;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MediaPlayerObject extends NexacroPlugin {
@@ -195,6 +196,18 @@ public class MediaPlayerObject extends NexacroPlugin {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == MEDIA_ACTIVITY_REQUEST) {
             if (intent != null) {
+                JSONObject jsonMediaInfoObject = new JSONObject();
+                try {
+                    jsonMediaInfoObject.put("duration", intent.getExtras().getString("duration"));
+                    jsonMediaInfoObject.put("currentPosition", intent.getExtras().getString("currentPosition"));
+
+
+                    send(CODE_SUCCESS,jsonMediaInfoObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
 
             }
         }

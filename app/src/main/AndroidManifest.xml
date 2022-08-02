@@ -39,7 +39,12 @@
             android:hardwareAccelerated="true"
             android:launchMode="singleTask"
             android:noHistory="false"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="OPEN_NEXACRO_ACTIVITY_EXAMPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
         <provider

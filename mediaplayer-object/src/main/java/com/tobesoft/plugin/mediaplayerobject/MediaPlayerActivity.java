@@ -12,6 +12,7 @@ import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDI
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDIA_START_TIME;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
