@@ -1,0 +1,10 @@
+﻿{
+	"name": "MediaPlayer",
+	"version": "1.0.0.0",
+	"description": "MediaPlayer nexacro platform",
+	"license": "",
+	"scripts": [
+        "MediaPlayer/MediaPlayer.js",
+	]
+}
+//@ sourceURL="MediaPlayer.json

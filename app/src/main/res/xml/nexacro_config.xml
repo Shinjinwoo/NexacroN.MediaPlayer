@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nexacro-config>
+    <!--notification enable="true" project-number="186238176928" ui-handler="com.nexacro.notification.DefaultUIHandler" handler="com.nexacro.notification.DefaultHandler"/-->
+    <application dialog-position="bottom"/>
+    <updator force="true"/>
+    <updator restart="false"/>
+    <notification enable="false" handler="com.nexacro.notification.DefaultHandler"/>
+
+</nexacro-config>
