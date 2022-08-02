@@ -28,10 +28,10 @@ public class MediaPlayerObject extends NexacroPlugin {
     private final static String LOG_TAG = "MediaPlayerObject";
 
 
-    public static final String PARAM_MEDIA_RESOURCE_TYPE = "mediaType";
+    public static final String PARAM_MEDIA_RESOURCE_TYPE = "mediaTypeFile";
     public static final String PARAM_MEDIA_RESOURCE = "data";
-    public static final String PARAM_MEDIA_START_TIME = "time";
-    public static final String PARAM_HIDE_SYSTEM_UI = "systemUI";
+    public static final String PARAM_MEDIA_START_TIME = "startTime";
+    public static final String PARAM_HIDE_SYSTEM_UI = "hideSystemUI";
 
 
     public String mServiceId = "";
@@ -122,7 +122,7 @@ public class MediaPlayerObject extends NexacroPlugin {
         extraParam.putString(PARAM_MEDIA_RESOURCE, urlPath);
         extraParam.putBoolean(PARAM_MEDIA_RESOURCE_TYPE, mIsMediaResourceTypeFile);
         if (!mediaStartTime.equals("false")) {
-            extraParam.putString(PARAM_MEDIA_START_TIME, mediaStartTime);
+            extraParam.putLong(PARAM_MEDIA_START_TIME, Long.parseLong(mediaStartTime));
         }
 
         if (Boolean.parseBoolean(hideSystemUI)) {

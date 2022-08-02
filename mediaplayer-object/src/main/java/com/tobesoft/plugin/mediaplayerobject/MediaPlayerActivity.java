@@ -40,13 +40,13 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private Long mPlaybackPosition = 0L;
     private ActivityPlayerBinding binding = null;
 
-    public Long mIsWantToPlayerContinue = 0L;
+    //public Long mIsWantToPlayerContinue = 0L;
     public Boolean mIsWantToHideSystemUI = false;
 
     public static final String DEFAULT_FILEPATH = "file://";
 
     public String mResource = "";
-    public String mStartTime = "";
+    public Long mStartTime = 0L;
     public Boolean mIsMediaResourceTypeFile = false;
 
     private final static String LOG_TAG = "MediaPlayerActivity";
@@ -65,9 +65,9 @@ public class MediaPlayerActivity extends AppCompatActivity {
         Bundle extraParam = getIntent().getExtras();
 
         mResource = extraParam.getString(PARAM_MEDIA_RESOURCE);
-        mStartTime = extraParam.getString(PARAM_MEDIA_START_TIME);
+        //mStartTime = extraParam.getString(PARAM_MEDIA_START_TIME);
 
-        mIsWantToPlayerContinue = extraParam.getLong(PARAM_MEDIA_START_TIME, 0L);
+        mPlaybackPosition = extraParam.getLong(PARAM_MEDIA_START_TIME, 0L);
         mIsWantToHideSystemUI = extraParam.getBoolean(PARAM_HIDE_SYSTEM_UI, false);
 
         mIsMediaResourceTypeFile = extraParam.getBoolean(PARAM_MEDIA_RESOURCE_TYPE);
@@ -83,8 +83,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
         }
 
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
-            if (mIsWantToPlayerContinue > 0) {
-                initializePlayer(mResource, mIsWantToPlayerContinue);
+            if (mStartTime > 0) {
+                initializePlayer(mResource, mStartTime);
             } else {
                 initializePlayer(mResource);
             }
@@ -120,8 +120,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
         }
 
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
-            if (mIsWantToPlayerContinue > 0) {
-                initializePlayer(mResource, mIsWantToPlayerContinue);
+            if (mStartTime > 0) {
+                initializePlayer(mResource, mStartTime);
             } else {
                 initializePlayer(mResource);
             }
