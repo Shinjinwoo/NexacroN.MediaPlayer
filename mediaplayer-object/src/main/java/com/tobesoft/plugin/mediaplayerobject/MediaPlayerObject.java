@@ -2,11 +2,19 @@ package com.tobesoft.plugin.mediaplayerobject;
 
 import static android.app.Activity.RESULT_CANCELED;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.nexacro.NexacroActivity;
 import com.nexacro.plugin.NexacroPlugin;
@@ -58,6 +66,7 @@ public class MediaPlayerObject extends NexacroPlugin {
         mMediaPlayerInterface = (MediaPlayerInterface) NexacroActivity.getInstance();
         mMediaPlayerInterface.setMediaPlayerObject(this);
         mActivity = NexacroActivity.getInstance();
+        requestPermissionForMediaPlayer();
 
         mMediaPlayerObject = this;
 
@@ -74,6 +83,7 @@ public class MediaPlayerObject extends NexacroPlugin {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void execute(String method, JSONObject paramObject) {
         mServiceId = "";
@@ -82,17 +92,17 @@ public class MediaPlayerObject extends NexacroPlugin {
                 JSONObject params = paramObject.getJSONObject("params");
                 mServiceId = params.getString("serviceid");
 
+
                 if (mServiceId.equals("mediaOpen")) {
                     JSONObject jsonObject = params.getJSONObject("param");
 
                     String mediaResource = jsonObject.getString("mediaResource");
 
 
-                    //String mediaStartTime = jsonObject.getString("mediaStartTime");
-
                     //jsonObject.optString의 경우 값이 없으면 두번쨰 파라미터의 값이 기본값으로 들어가게 된다.
                     String mediaStartTime = jsonObject.optString("mediaStartTime", "0");
                     String hideSystemUI = jsonObject.optString("hideSystemUI", "false");
+
 
                     Log.d(LOG_TAG, mediaStartTime + " " + hideSystemUI);
 
@@ -185,6 +195,12 @@ public class MediaPlayerObject extends NexacroPlugin {
         return false;
     }
 
+    public void requestPermissionForMediaPlayer() {
+        if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 123123123);
+        }
+    }
+
     public static boolean isActivityResult(int requestCode) {
         boolean result = false;
         switch (requestCode) {
@@ -199,24 +215,26 @@ public class MediaPlayerObject extends NexacroPlugin {
         if (requestCode == MEDIA_ACTIVITY_REQUEST) {
             if (intent != null) {
                 JSONObject jsonMediaInfoObject = new JSONObject();
-                if ( resultCode == RESULT_CANCELED)
-                {
-                        String errorInfo = intent.getExtras().getString("error");
-                        send(CODE_ERROR, METHOD_CALLMETHOD + " : " + errorInfo);
+                if (resultCode == RESULT_CANCELED) {
+                    String errorInfo = intent.getExtras().getString("error");
+                    send(CODE_ERROR, METHOD_CALLMETHOD + " : " + errorInfo);
                 }
-
                 try {
                     jsonMediaInfoObject.put("duration", intent.getExtras().getString("duration"));
                     jsonMediaInfoObject.put("currentPosition", intent.getExtras().getString("currentPosition"));
 
-
-                    send(CODE_SUCCESS,jsonMediaInfoObject);
+                    send(CODE_SUCCESS, jsonMediaInfoObject);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
 
-
-
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permission, @NonNull int[] grantResults) {
+        for (String checkPermission : permission) {
+            if (!checkPermission.contains("android.permission.READ_EXTERNAL_STORAGE")) {
+                requestPermissionForMediaPlayer();
             }
         }
     }

@@ -2,6 +2,7 @@ package com.example.nexacronmediaplayer;
 
 import static android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -62,18 +63,13 @@ public class NexacroActivityExt extends NexacroActivity implements MediaPlayerIn
         this.mMediaPlayerObject = mediaplayerObject;
     }
 
-    // 모든 저장소 권한은 특별하게 필요하지 않으므로 주석처리
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permission, @NonNull int[] grantResults) {
-//        if (Build.VERSION.SDK_INT >= 30) {
-//            for (String checkPermission : permission) {
-//                if (checkPermission.equals("android.permission.READ_EXTERNAL_STORAGE")) {
-//                    Intent intent = new Intent(ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-//                    startActivityForResult(intent, Define.REQUEST_PERMISSION.APP_STORAGE_ACCESS_REQUEST_CODE);
-//                }
-//            }
-//        }
-//        super.onRequestPermissionsResult(requestCode, permission, grantResults);
-//    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permission, @NonNull int[] grantResults) {
+        mMediaPlayerObject.onRequestPermissionsResult(requestCode,permission,grantResults);
+        super.onRequestPermissionsResult(requestCode, permission, grantResults);
+    }
+
+
+
 }
