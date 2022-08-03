@@ -43,6 +43,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
     //public Long mIsWantToPlayerContinue = 0L;
     public Boolean mIsWantToHideSystemUI = false;
+    private Boolean mIsError = false;
+    private String mErrorMsg = "";
 
     public static final String DEFAULT_FILEPATH = "file://";
 
@@ -66,7 +68,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
         Bundle extraParam = getIntent().getExtras();
 
         mResource = extraParam.getString(PARAM_MEDIA_RESOURCE);
-        //mStartTime = extraParam.getString(PARAM_MEDIA_START_TIME);
 
         mPlaybackPosition = extraParam.getLong(PARAM_MEDIA_START_TIME, 0L);
         mIsWantToHideSystemUI = extraParam.getBoolean(PARAM_HIDE_SYSTEM_UI, false);
@@ -79,11 +80,11 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        if (mIsWantToHideSystemUI) {
-            hideSystemUi();
-        }
-
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
+            if (mIsWantToHideSystemUI) {
+                hideSystemUi();
+            }
+
             if (mStartTime > 0) {
                 initializePlayer(mResource, mStartTime);
             } else {
@@ -97,6 +98,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
     protected void onStop() {
         try {
             releasePlayer();
+            if (mIsError){
+                mMediaPlayerObject.send(CODE_ERROR,mErrorMsg);
+
+                mIsError = false;
+                mErrorMsg = "";
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -107,6 +114,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
     protected void onDestroy() {
         try {
             releasePlayer();
+            if (mIsError){
+                mMediaPlayerObject.send(CODE_ERROR,mErrorMsg);
+
+                mIsError = false;
+                mErrorMsg = "";
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -116,11 +129,10 @@ public class MediaPlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
 
-        if (mIsWantToHideSystemUI) {
-            hideSystemUi();
-        }
-
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
+            if (mIsWantToHideSystemUI) {
+                hideSystemUi();
+            }
             if (mStartTime > 0) {
                 initializePlayer(mResource, mStartTime);
             } else {
@@ -135,6 +147,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
     protected void onPause() {
         try {
             releasePlayer();
+            if (mIsError){
+                mMediaPlayerObject.send(CODE_ERROR,mErrorMsg);
+
+                mIsError = false;
+                mErrorMsg = "";
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -158,9 +176,9 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mExoPlayer.setMediaItem(mediaItem);
         mExoPlayer.setPlayWhenReady(mPlayWhenReady);
         mExoPlayer.seekTo(mCurrentItem, mPlaybackPosition);
-        mExoPlayer.addAnalyticsListener(new EventLogger());
+        //mExoPlayer.addAnalyticsListener(new EventLogger());
         mExoPlayer.addListener(playbackStateListener());
-        mExoPlayer.addListener(playErrorException());
+        //mExoPlayer.addListener(playErrorException());
 
         mExoPlayer.prepare();
     }
@@ -182,9 +200,11 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mExoPlayer.setMediaItem(mediaItem, setStartTime);
         mExoPlayer.setPlayWhenReady(mPlayWhenReady);
         mExoPlayer.seekTo(mCurrentItem, mPlaybackPosition);
-        mExoPlayer.addAnalyticsListener(new EventLogger());
+        //mExoPlayer.addAnalyticsListener(new EventLogger());
         mExoPlayer.addListener(playbackStateListener());
-        mExoPlayer.addListener(playErrorException());
+        //mExoPlayer.addListener(playErrorException());
+
+        mExoPlayer.getCurrentManifest();
 
         mExoPlayer.prepare();
     }
@@ -208,19 +228,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
             exoPlayer.release();
 
             JSONObject jsonMediaInfoObject = new JSONObject();
-
             jsonMediaInfoObject.put("duration", duration);
             jsonMediaInfoObject.put("currentPosition", currentPosition);
 
             mMediaPlayerObject.send(CODE_SUCCESS, jsonMediaInfoObject);
         }
         mExoPlayer = null;
-
-//        Intent intentR = new Intent();
-//        intentR.putExtra("sendText" , ""); //사용자에게 입력받은값 넣기
-//        setResult(RESULT_OK,intentR); //결과를 저장
-//        finish();
-
     }
 
     @SuppressLint("InlinedApi")
@@ -254,22 +267,14 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
             @Override
             public void onPlayerError(@NonNull PlaybackException error) {
-                mMediaPlayerObject.send(CODE_ERROR, error);
+                mIsError = true;
+                mErrorMsg = error.getMessage();
                 Player.Listener.super.onPlayerError(error);
             }
         };
     }
 
 
-    private Player.Listener playErrorException() {
-        return new Player.Listener() {
-            @Override
-            public void onPlayerError(@NonNull PlaybackException error) {
-                mMediaPlayerObject.send(CODE_ERROR, error);
-                Player.Listener.super.onPlayerError(error);
-            }
-        };
-    }
 
 
 }

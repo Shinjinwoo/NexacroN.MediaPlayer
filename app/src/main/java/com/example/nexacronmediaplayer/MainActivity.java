@@ -15,9 +15,8 @@ public class MainActivity extends NexacroUpdatorActivity {
 
         setBootstrapURL("http://smart.tobesoft.co.kr/NexacroN/MediaPlayer/_android_/start_android.json");
         setProjectURL("http://smart.tobesoft.co.kr/NexacroN/MediaPlayer/_android_/");
+        setRPP("9223");
 
-//        setBootstrapURL("http://smart.tobesoft.co.kr/techService/N/01_KIA/start_android.json");
-//        setProjectURL("http://smart.tobesoft.co.kr/techService/N/01_KIA/");
 
         this.setStartupClass(NexacroActivityExt.class);
     }

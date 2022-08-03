@@ -1,5 +1,7 @@
 package com.tobesoft.plugin.mediaplayerobject;
 
+import static android.app.Activity.RESULT_CANCELED;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -197,6 +199,12 @@ public class MediaPlayerObject extends NexacroPlugin {
         if (requestCode == MEDIA_ACTIVITY_REQUEST) {
             if (intent != null) {
                 JSONObject jsonMediaInfoObject = new JSONObject();
+                if ( resultCode == RESULT_CANCELED)
+                {
+                        String errorInfo = intent.getExtras().getString("error");
+                        send(CODE_ERROR, METHOD_CALLMETHOD + " : " + errorInfo);
+                }
+
                 try {
                     jsonMediaInfoObject.put("duration", intent.getExtras().getString("duration"));
                     jsonMediaInfoObject.put("currentPosition", intent.getExtras().getString("currentPosition"));
