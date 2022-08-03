@@ -178,6 +178,14 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mExoPlayer.seekTo(mCurrentItem, mPlaybackPosition);
         //mExoPlayer.addAnalyticsListener(new EventLogger());
         mExoPlayer.addListener(playbackStateListener());
+
+        // Todo
+        // 1.Method 기능 파악하기.
+        //  mExoPlayer.setVideoScalingMode();
+        //  mExoPlayer.setForegroundMode();
+        // 2.Permission
+        // 저장소 권한 넣어주기.
+
         //mExoPlayer.addListener(playErrorException());
 
         mExoPlayer.prepare();
