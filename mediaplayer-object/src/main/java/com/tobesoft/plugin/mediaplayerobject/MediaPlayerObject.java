@@ -2,6 +2,8 @@ package com.tobesoft.plugin.mediaplayerobject;
 
 import static android.app.Activity.RESULT_CANCELED;
 
+import static com.kh.plugin.plugincommonlib.constant.PluginConstants.CODE_PERMISSION_ERROR;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -11,17 +13,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 
+import com.kh.plugin.plugincommonlib.info.PermissionRequest;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.kh.plugin.plugincommonlib.util.PermissionUtil;
 import com.nexacro.NexacroActivity;
 import com.nexacro.plugin.NexacroPlugin;
+import com.tobesoft.plugin.mediaplayerobject.plugininterface.Define;
 import com.tobesoft.plugin.mediaplayerobject.plugininterface.MediaPlayerInterface;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MediaPlayerObject extends NexacroPlugin {
 
@@ -38,11 +47,10 @@ public class MediaPlayerObject extends NexacroPlugin {
 
     private final static String LOG_TAG = "MediaPlayerObject";
 
-
-    public static final String PARAM_MEDIA_RESOURCE_TYPE = "mediaTypeFile";
-    public static final String PARAM_MEDIA_RESOURCE = "data";
-    public static final String PARAM_MEDIA_START_TIME = "startTime";
-    public static final String PARAM_HIDE_SYSTEM_UI = "hideSystemUI";
+//    public static final String PARAM_MEDIA_RESOURCE_TYPE = "mediaTypeFile";
+//    public static final String PARAM_MEDIA_RESOURCE = "data";
+//    public static final String PARAM_MEDIA_START_TIME = "startTime";
+//    public static final String PARAM_HIDE_SYSTEM_UI = "hideSystemUI";
 
 
     public String mServiceId = "";
@@ -66,7 +74,7 @@ public class MediaPlayerObject extends NexacroPlugin {
         mMediaPlayerInterface = (MediaPlayerInterface) NexacroActivity.getInstance();
         mMediaPlayerInterface.setMediaPlayerObject(this);
         mActivity = NexacroActivity.getInstance();
-        requestPermissionForMediaPlayer();
+        //requestPermissionForMediaPlayer();
 
         mMediaPlayerObject = this;
 
@@ -96,27 +104,35 @@ public class MediaPlayerObject extends NexacroPlugin {
                 if (mServiceId.equals("mediaOpen")) {
                     JSONObject jsonObject = params.getJSONObject("param");
 
-                    String mediaResource = jsonObject.getString("mediaResource");
 
+                    List<String> permissions = new ArrayList<>();
+                    permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
 
-                    //jsonObject.optString의 경우 값이 없으면 두번쨰 파라미터의 값이 기본값으로 들어가게 된다.
-                    String mediaStartTime = jsonObject.optString("mediaStartTime", "0");
-                    String hideSystemUI = jsonObject.optString("hideSystemUI", "false");
+                    //장수석님 퍼미션 유틸
+                    List<String> requestPermissions = PermissionUtil.hasPermissions(mActivity, permissions);
 
-
-                    Log.d(LOG_TAG, mediaStartTime + " " + hideSystemUI);
-
-                    if (Patterns.WEB_URL.matcher(mediaResource).matches()) {
-                        if (!mediaResource.equals("")) {
-                            playByUrl(mediaResource, mediaStartTime, hideSystemUI);
-                        } else {
-                            send(CODE_ERROR, METHOD_CALLMETHOD + " : no Value for MediaPlayer Resource");
-                        }
+                    if (!requestPermissions.isEmpty()) {
+                        ActivityCompat.requestPermissions(mActivity, requestPermissions.toArray(new String[requestPermissions.size()]), PermissionRequest.MEDIAPLAYER_PERMISION_REQUST);
                     } else {
-                        if (!mediaResource.equals("")) {
-                            playByFile(mediaResource, mediaStartTime, hideSystemUI);
+                        String mediaResource = jsonObject.getString("mediaResource");
+
+                        //jsonObject.optString의 경우 값이 없으면 두번쨰 파라미터의 값이 Default로 들어가게 된다.
+                        String mediaStartTime = jsonObject.optString("mediaStartTime", "0");
+                        String hideSystemUI = jsonObject.optString("hideSystemUI", "false");
+                        Log.d(LOG_TAG, mediaStartTime + " " + hideSystemUI);
+
+                        if (Patterns.WEB_URL.matcher(mediaResource).matches()) {
+                            if (!mediaResource.equals("")) {
+                                playByUrl(mediaResource, mediaStartTime, hideSystemUI);
+                            } else {
+                                send(CODE_ERROR, METHOD_CALLMETHOD + " : no Value for MediaPlayer Resource");
+                            }
                         } else {
-                            send(CODE_ERROR, METHOD_CALLMETHOD + " : no Value for MediaPlayer Resource");
+                            if (!mediaResource.equals("")) {
+                                playByFile(mediaResource, mediaStartTime, hideSystemUI);
+                            } else {
+                                send(CODE_ERROR, METHOD_CALLMETHOD + " : no Value for MediaPlayer Resource");
+                            }
                         }
                     }
                 }
@@ -132,14 +148,14 @@ public class MediaPlayerObject extends NexacroPlugin {
         Bundle extraParam = new Bundle();
         mIsMediaResourceTypeFile = false;
 
-        extraParam.putString(PARAM_MEDIA_RESOURCE, urlPath);
-        extraParam.putBoolean(PARAM_MEDIA_RESOURCE_TYPE, mIsMediaResourceTypeFile);
+        extraParam.putString(Define.ConstString.PARAM_MEDIA_RESOURCE, urlPath);
+        extraParam.putBoolean(Define.ConstString.PARAM_MEDIA_RESOURCE_TYPE, mIsMediaResourceTypeFile);
         if (!mediaStartTime.equals("false")) {
-            extraParam.putLong(PARAM_MEDIA_START_TIME, Long.parseLong(mediaStartTime));
+            extraParam.putLong(Define.ConstString.PARAM_MEDIA_START_TIME, Long.parseLong(mediaStartTime));
         }
 
         if (Boolean.parseBoolean(hideSystemUI)) {
-            extraParam.putBoolean(PARAM_HIDE_SYSTEM_UI, true);
+            extraParam.putBoolean(Define.ConstString.PARAM_HIDE_SYSTEM_UI, true);
         }
 
         Intent intent = new Intent(mActivity, MediaPlayerActivity.class);
@@ -153,14 +169,14 @@ public class MediaPlayerObject extends NexacroPlugin {
         Bundle extraParam = new Bundle();
         mIsMediaResourceTypeFile = true;
 
-        extraParam.putString(PARAM_MEDIA_RESOURCE, filePath);
-        extraParam.putBoolean(PARAM_MEDIA_RESOURCE_TYPE, mIsMediaResourceTypeFile);
+        extraParam.putString(Define.ConstString.PARAM_MEDIA_RESOURCE, filePath);
+        extraParam.putBoolean(Define.ConstString.PARAM_MEDIA_RESOURCE_TYPE, mIsMediaResourceTypeFile);
         if (!mediaStartTime.equals("0")) {
-            extraParam.putString(PARAM_MEDIA_START_TIME, mediaStartTime);
+            extraParam.putString(Define.ConstString.PARAM_MEDIA_START_TIME, mediaStartTime);
         }
 
         if (Boolean.parseBoolean(hideSystemUI)) {
-            extraParam.putBoolean(PARAM_HIDE_SYSTEM_UI, true);
+            extraParam.putBoolean(Define.ConstString.PARAM_HIDE_SYSTEM_UI, true);
         }
 
         Intent intent = new Intent(mActivity, MediaPlayerActivity.class);
@@ -195,12 +211,6 @@ public class MediaPlayerObject extends NexacroPlugin {
         return false;
     }
 
-    public void requestPermissionForMediaPlayer() {
-        if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 123123123);
-        }
-    }
-
     public static boolean isActivityResult(int requestCode) {
         boolean result = false;
         switch (requestCode) {
@@ -231,10 +241,36 @@ public class MediaPlayerObject extends NexacroPlugin {
         }
     }
 
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permission, @NonNull int[] grantResults) {
-        for (String checkPermission : permission) {
-            if (!checkPermission.contains("android.permission.READ_EXTERNAL_STORAGE")) {
-                requestPermissionForMediaPlayer();
+//    public static boolean isRequestPermissionsResult(int requestCode) {
+//        boolean result = false;
+//        switch(requestCode) {
+//            case PermissionRequest.MEDIAPLAYER_PERMISION_REQUST:
+//                result = true;
+//                break;
+//        }
+//        return result;
+//    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PermissionRequest.MEDIAPLAYER_PERMISION_REQUST: {
+                boolean isPermissionGranted = true;
+                for (int i = 0; i < permissions.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                        Log.d(LOG_TAG, "permissions[" + i + "] = " + permissions[i] + " : PERMISSION_DENIED");
+                        isPermissionGranted = false;
+                    }
+                }
+                if (isPermissionGranted) {
+                    try {
+                        send(CODE_SUCCESS,"Permission Granted");
+                    } catch (Exception e) {
+                        send(CODE_ERROR, METHOD_CALLMETHOD + ":" + e.getMessage());
+                    }
+                } else {
+                    send(CODE_PERMISSION_ERROR, "permission denied");
+                }
+                break;
             }
         }
     }

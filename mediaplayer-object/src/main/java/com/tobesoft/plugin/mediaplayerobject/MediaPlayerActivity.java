@@ -1,15 +1,12 @@
 package com.tobesoft.plugin.mediaplayerobject;
 
+import static com.google.android.exoplayer2.C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
 import static com.google.android.exoplayer2.Player.STATE_BUFFERING;
 import static com.google.android.exoplayer2.Player.STATE_ENDED;
 import static com.google.android.exoplayer2.Player.STATE_IDLE;
 import static com.google.android.exoplayer2.Player.STATE_READY;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_ERROR;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_SUCCESS;
-import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_HIDE_SYSTEM_UI;
-import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDIA_RESOURCE;
-import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDIA_RESOURCE_TYPE;
-import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.PARAM_MEDIA_START_TIME;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -29,6 +26,7 @@ import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.tobesoft.plugin.mediaplayerobject.databinding.ActivityPlayerBinding;
+import com.tobesoft.plugin.mediaplayerobject.plugininterface.Define;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,12 +65,10 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
         Bundle extraParam = getIntent().getExtras();
 
-        mResource = extraParam.getString(PARAM_MEDIA_RESOURCE);
-
-        mPlaybackPosition = extraParam.getLong(PARAM_MEDIA_START_TIME, 0L);
-        mIsWantToHideSystemUI = extraParam.getBoolean(PARAM_HIDE_SYSTEM_UI, false);
-
-        mIsMediaResourceTypeFile = extraParam.getBoolean(PARAM_MEDIA_RESOURCE_TYPE);
+        mResource = extraParam.getString(Define.ConstString.PARAM_MEDIA_RESOURCE);
+        mPlaybackPosition = extraParam.getLong(Define.ConstString.PARAM_MEDIA_START_TIME, 0L);
+        mIsWantToHideSystemUI = extraParam.getBoolean(Define.ConstString.PARAM_HIDE_SYSTEM_UI, false);
+        mIsMediaResourceTypeFile = extraParam.getBoolean(Define.ConstString.PARAM_MEDIA_RESOURCE_TYPE);
 
         binding = ActivityPlayerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -176,17 +172,23 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mExoPlayer.setMediaItem(mediaItem);
         mExoPlayer.setPlayWhenReady(mPlayWhenReady);
         mExoPlayer.seekTo(mCurrentItem, mPlaybackPosition);
+        mExoPlayer.setVideoScalingMode(VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
         //mExoPlayer.addAnalyticsListener(new EventLogger());
         mExoPlayer.addListener(playbackStateListener());
 
-        // Todo
-        // 1.Method 기능 파악하기.
-        //  mExoPlayer.setVideoScalingMode();
-        //  mExoPlayer.setForegroundMode();
-        // 2.Permission
-        // 저장소 권한 넣어주기.
+        /*
+         Todo
+         1.Method 기능 파악하기.
+          mExoPlayer.setVideoScalingMode();
 
-        //mExoPlayer.addListener(playErrorException());
+          mExoPlayer.setForegroundMode();
+          파악사항 : 앱이 잠자기 모드 ( idle State 일때도 미디어와 관련된 리소스들을 들고있는 상태로 전환되는 Boolean 값 이다.
+          ex ) YouTube Premium BackGround Music 기능구현중 일부로 추정됨.
+
+         2.Permission
+         저장소 권한 넣어주기. -> 완료
+        */
+
 
         mExoPlayer.prepare();
     }
@@ -208,6 +210,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mExoPlayer.setMediaItem(mediaItem, setStartTime);
         mExoPlayer.setPlayWhenReady(mPlayWhenReady);
         mExoPlayer.seekTo(mCurrentItem, mPlaybackPosition);
+        mExoPlayer.setVideoScalingMode(VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
         //mExoPlayer.addAnalyticsListener(new EventLogger());
         mExoPlayer.addListener(playbackStateListener());
         //mExoPlayer.addListener(playErrorException());
@@ -281,7 +284,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
             }
         };
     }
-
 
 
 
