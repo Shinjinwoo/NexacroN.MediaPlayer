@@ -124,13 +124,21 @@ public class MediaPlayerObject extends NexacroPlugin {
 
                         if (Patterns.WEB_URL.matcher(mediaResource).matches()) {
                             if (!mediaResource.equals("")) {
-                                playByUrl(mediaResource, mediaStartTime, hideSystemUI);
+                                if (!mIsPipMode) {
+                                    playByUrl(mediaResource, mediaStartTime, hideSystemUI);
+                                } else {
+                                    send(CODE_ERROR, "is Already In Pip Mode");
+                                }
                             } else {
                                 send(CODE_ERROR, METHOD_CALLMETHOD + " : no Value for MediaPlayer Resource");
                             }
                         } else {
                             if (!mediaResource.equals("")) {
-                                playByFile(mediaResource, mediaStartTime, hideSystemUI);
+                                if (!mIsPipMode) {
+                                    playByFile(mediaResource, mediaStartTime, hideSystemUI);
+                                } else {
+                                    send(CODE_ERROR, "is Already In Pip Mode");
+                                }
                             } else {
                                 send(CODE_ERROR, METHOD_CALLMETHOD + " : no Value for MediaPlayer Resource");
                             }
@@ -264,7 +272,7 @@ public class MediaPlayerObject extends NexacroPlugin {
                 }
                 if (isPermissionGranted) {
                     try {
-                        send(CODE_SUCCESS,"Permission Granted");
+                        send(CODE_SUCCESS, "Permission Granted");
                     } catch (Exception e) {
                         send(CODE_ERROR, METHOD_CALLMETHOD + ":" + e.getMessage());
                     }

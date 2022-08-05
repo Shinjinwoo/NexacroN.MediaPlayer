@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000">
@@ -19,9 +20,20 @@ limitations under the License. -->
   <com.google.android.exoplayer2.ui.StyledPlayerView
       android:id="@+id/video_view"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"/>
+      android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/button"
+        style="?android:borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#00ff0000"
+        android:text="PIPMODE"
+        android:textColor="#FFFFFF"
+        android:visibility="visible"
+        tools:visibility="visible" />
 
+  </com.google.android.exoplayer2.ui.StyledPlayerView>
 
 
 </FrameLayout>

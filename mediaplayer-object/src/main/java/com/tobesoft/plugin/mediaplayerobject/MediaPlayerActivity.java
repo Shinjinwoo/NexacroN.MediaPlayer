@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Rational;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -48,6 +49,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
     public Boolean mIsWantToHideSystemUI = false;
     private Boolean mIsError = false;
     private String mErrorMsg = "";
+    private Boolean mIsAlreadyPip = false;
+
 
     public static final String DEFAULT_FILEPATH = "file://";
 
@@ -76,20 +79,32 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mIsMediaResourceTypeFile = extraParam.getBoolean(Define.ConstString.PARAM_MEDIA_RESOURCE_TYPE);
 
         binding = ActivityPlayerBinding.inflate(getLayoutInflater());
+
+        binding.button.bringToFront();
+
+        binding.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onPipMode();
+            }
+        });
+
         setContentView(binding.getRoot());
     }
 
     @Override
     protected void onStart() {
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
-            if (mIsWantToHideSystemUI) {
-                hideSystemUi();
-            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (mIsWantToHideSystemUI) {
+                    hideSystemUi();
+                }
+                if (mStartTime > 0) {
+                    initializePlayer(mResource, mStartTime);
+                } else {
+                    initializePlayer(mResource);
+                }
 
-            if (mStartTime > 0) {
-                initializePlayer(mResource, mStartTime);
-            } else {
-                initializePlayer(mResource);
             }
         }
         super.onStart();
@@ -99,8 +114,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
     protected void onStop() {
         try {
             releasePlayer();
-            if (mIsError){
-                mMediaPlayerObject.send(CODE_ERROR,mErrorMsg);
+            if (mIsError) {
+                mMediaPlayerObject.send(CODE_ERROR, mErrorMsg);
 
                 mIsError = false;
                 mErrorMsg = "";
@@ -108,6 +123,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        mPipBuilder = null;
+        mMediaPlayerObject.mIsPipMode = false;
         super.onStop();
     }
 
@@ -115,8 +132,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
     protected void onDestroy() {
         try {
             releasePlayer();
-            if (mIsError){
-                mMediaPlayerObject.send(CODE_ERROR,mErrorMsg);
+            if (mIsError) {
+                mMediaPlayerObject.send(CODE_ERROR, mErrorMsg);
 
                 mIsError = false;
                 mErrorMsg = "";
@@ -124,26 +141,25 @@ public class MediaPlayerActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        mPipBuilder = null;
+        mMediaPlayerObject.mIsPipMode = false;
+
         super.onDestroy();
     }
 
     @Override
     protected void onResume() {
-
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                if (isInPictureInPictureMode()){
-                    Log.d(LOG_TAG,"::::::::::is In Pip Mode");
-                } else {
-                    if (mIsWantToHideSystemUI) {
-                        hideSystemUi();
-                    }
-                    if (mStartTime > 0) {
-                        initializePlayer(mResource, mStartTime);
-                    } else {
-                        initializePlayer(mResource);
-                    }
+                if (mIsWantToHideSystemUI) {
+                    hideSystemUi();
                 }
+                if (mStartTime > 0) {
+                    initializePlayer(mResource, mStartTime);
+                } else {
+                    initializePlayer(mResource);
+                }
+
             }
         }
 
@@ -151,25 +167,18 @@ public class MediaPlayerActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onUserLeaveHint() {
-
-
-        super.onUserLeaveHint();
-    }
-
-    @Override
     protected void onPause() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                if (isInPictureInPictureMode()){
-                    Log.d(LOG_TAG,"::::::::::is In Pip Mode");
+                if (isInPictureInPictureMode()) {
+                    Log.d(LOG_TAG, "::::::::::is In Pip Mode");
                 } else {
                     releasePlayer();
                 }
             }
 
-            if (mIsError){
-                mMediaPlayerObject.send(CODE_ERROR,mErrorMsg);
+            if (mIsError) {
+                mMediaPlayerObject.send(CODE_ERROR, mErrorMsg);
 
                 mIsError = false;
                 mErrorMsg = "";
@@ -201,23 +210,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
         //mExoPlayer.addAnalyticsListener(new EventLogger());
         mExoPlayer.addListener(playbackStateListener());
 
-        /*
-         Todo
-         1.Method 기능 파악하기.
-          mExoPlayer.setVideoScalingMode();
-
-          mExoPlayer.setForegroundMode();
-          파악사항 : 앱이 잠자기 모드 ( idle State 일때도 미디어와 관련된 리소스들을 들고있는 상태로 전환되는 Boolean 값 이다.
-          ex ) YouTube Premium BackGround Music 기능구현중 일부로 추정됨.
-
-         2.Permission
-         저장소 권한 넣어주기. -> 완료
-        */
-
-
         mExoPlayer.prepare();
 
-        onPipMode();
     }
 
 
@@ -243,10 +237,11 @@ public class MediaPlayerActivity extends AppCompatActivity {
         //mExoPlayer.addListener(playErrorException());
 
         mExoPlayer.getCurrentManifest();
-
         mExoPlayer.prepare();
 
-        onPipMode();
+        binding.button.bringToFront();
+
+        //onPipMode();
 
     }
 
@@ -315,24 +310,27 @@ public class MediaPlayerActivity extends AppCompatActivity {
         };
     }
 
-    public void onPipMode(){
-
+    public void onPipMode() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            mPipBuilder= new PictureInPictureParams.Builder();
-            mPipBuilder.setAspectRatio(new Rational(binding.videoView.getWidth(),binding.videoView.getHeight()));
+            mPipBuilder = new PictureInPictureParams.Builder();
+            mPipBuilder.setAspectRatio(new Rational(binding.videoView.getWidth(), binding.videoView.getHeight()));
             this.enterPictureInPictureMode();
 
+            mIsAlreadyPip = true;
             mMediaPlayerObject.mIsPipMode = true;
         }
     }
 
-    private void updatePipParams() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            PictureInPictureParams.Builder pipBuilder = new PictureInPictureParams.Builder();
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (isInPictureInPictureMode()) {
+                binding.button.setVisibility(View.GONE);
+            } else {
+                binding.button.setVisibility(View.VISIBLE);
+            }
         }
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
     }
-
-
-
 }
