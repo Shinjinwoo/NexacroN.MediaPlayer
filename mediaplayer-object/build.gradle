@@ -34,25 +34,17 @@ dependencies {
 
     compileOnly 'com.google.android.material:material:1.6.1'
     compileOnly 'androidx.constraintlayout:constraintlayout:2.1.4'
-    compileOnly 'androidx.appcompat:appcompat:1.4.1'
+    compileOnly 'androidx.appcompat:appcompat:1.4.2'
     compileOnly 'androidx.multidex:multidex:2.0.1'
     compileOnly files('libs/nexacro.aar')
     compileOnly files('libs/plugin-common-lib-2.5.3.jar');
+
 
 
     compileOnly 'com.google.android.exoplayer:exoplayer-core:2.18.1'
     compileOnly 'com.google.android.exoplayer:exoplayer-dash:2.18.1'
     compileOnly 'com.google.android.exoplayer:exoplayer-ui:2.18.1'
     compileOnly 'com.google.android.exoplayer:exoplayer-hls:2.18.1'
-
-
-
-//    compileOnly "com.google.android.exoplayer:exoplayer-core:2.14.1"
-//    compileOnly "com.google.android.exoplayer:exoplayer-ui:2.14.1"
-//    compileOnly "com.google.android.exoplayer:exoplayer-hls:2.14.1"
-
-
-
 
 
 }

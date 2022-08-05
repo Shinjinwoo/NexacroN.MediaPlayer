@@ -9,10 +9,14 @@ import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_ERROR
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_SUCCESS;
 
 import android.annotation.SuppressLint;
+import android.app.PictureInPictureParams;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Rational;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -38,6 +42,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private int mCurrentItem;
     private Long mPlaybackPosition = 0L;
     private ActivityPlayerBinding binding = null;
+    private PictureInPictureParams.Builder mPipBuilder = null;
 
     //public Long mIsWantToPlayerContinue = 0L;
     public Boolean mIsWantToHideSystemUI = false;
@@ -126,13 +131,19 @@ public class MediaPlayerActivity extends AppCompatActivity {
     protected void onResume() {
 
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
-            if (mIsWantToHideSystemUI) {
-                hideSystemUi();
-            }
-            if (mStartTime > 0) {
-                initializePlayer(mResource, mStartTime);
-            } else {
-                initializePlayer(mResource);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (isInPictureInPictureMode()){
+                    Log.d(LOG_TAG,"::::::::::is In Pip Mode");
+                } else {
+                    if (mIsWantToHideSystemUI) {
+                        hideSystemUi();
+                    }
+                    if (mStartTime > 0) {
+                        initializePlayer(mResource, mStartTime);
+                    } else {
+                        initializePlayer(mResource);
+                    }
+                }
             }
         }
 
@@ -140,9 +151,23 @@ public class MediaPlayerActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onUserLeaveHint() {
+
+
+        super.onUserLeaveHint();
+    }
+
+    @Override
     protected void onPause() {
         try {
-            releasePlayer();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (isInPictureInPictureMode()){
+                    Log.d(LOG_TAG,"::::::::::is In Pip Mode");
+                } else {
+                    releasePlayer();
+                }
+            }
+
             if (mIsError){
                 mMediaPlayerObject.send(CODE_ERROR,mErrorMsg);
 
@@ -191,6 +216,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
 
         mExoPlayer.prepare();
+
+        onPipMode();
     }
 
 
@@ -218,6 +245,9 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mExoPlayer.getCurrentManifest();
 
         mExoPlayer.prepare();
+
+        onPipMode();
+
     }
 
     private void releasePlayer() throws JSONException {
@@ -283,6 +313,24 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 Player.Listener.super.onPlayerError(error);
             }
         };
+    }
+
+    public void onPipMode(){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            mPipBuilder= new PictureInPictureParams.Builder();
+            mPipBuilder.setAspectRatio(new Rational(binding.videoView.getWidth(),binding.videoView.getHeight()));
+            this.enterPictureInPictureMode();
+
+            mMediaPlayerObject.mIsPipMode = true;
+        }
+    }
+
+    private void updatePipParams() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            PictureInPictureParams.Builder pipBuilder = new PictureInPictureParams.Builder();
+        }
     }
 
 

@@ -55,6 +55,7 @@ public class MediaPlayerObject extends NexacroPlugin {
 
     public String mServiceId = "";
     public Boolean mIsMediaResourceTypeFile = false;
+    public Boolean mIsPipMode = false;
 
 
     public static final int MEDIA_ACTIVITY_REQUEST = 123123123;
