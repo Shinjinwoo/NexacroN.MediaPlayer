@@ -263,11 +263,15 @@ public class MediaPlayerActivity extends AppCompatActivity {
             Log.d(LOG_TAG, "::::::::::::::::::::::::::::::::::::::::::::::::" + currentPosition);
             exoPlayer.release();
 
-            JSONObject jsonMediaInfoObject = new JSONObject();
-            jsonMediaInfoObject.put("duration", duration);
-            jsonMediaInfoObject.put("currentPosition", currentPosition);
-
-            mMediaPlayerObject.send(CODE_SUCCESS, jsonMediaInfoObject);
+            if (!mIsError) {
+                JSONObject jsonMediaInfoObject = new JSONObject();
+                jsonMediaInfoObject.put("duration", duration);
+                jsonMediaInfoObject.put("currentPosition", currentPosition);
+                mMediaPlayerObject.send(CODE_SUCCESS, jsonMediaInfoObject);
+                if (mExoPlayer.getDuration() < 0) {
+                    mMediaPlayerObject.send(CODE_ERROR,"MediaPlayer Initialize Not Yet");
+                }
+            }
         }
         mExoPlayer = null;
     }
