@@ -36,6 +36,8 @@ import com.tobesoft.plugin.mediaplayerobject.plugininterface.Define;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
+
 public class MediaPlayerActivity extends AppCompatActivity {
 
     private ExoPlayer mExoPlayer = null;
@@ -307,7 +309,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
             @Override
             public void onPlayerError(@NonNull PlaybackException error) {
                 mIsError = true;
-                mErrorMsg = error.getMessage();
+                mErrorMsg = "Error Message : " + error.getMessage() + "\nError StackTrace : " + Arrays.toString(error.getStackTrace());
                 Player.Listener.super.onPlayerError(error);
             }
         };
