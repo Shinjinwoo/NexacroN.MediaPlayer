@@ -255,15 +255,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
             mPlayWhenReady = exoPlayer.getPlayWhenReady();
             exoPlayer.removeListener(playbackStateListener());
 
-
-            String duration = String.valueOf(mExoPlayer.getDuration());
-            String currentPosition = String.valueOf(mExoPlayer.getCurrentPosition());
-
-            Log.d(LOG_TAG, "::::::::::::::::::::::::::::::::::::::::::::::::" + duration);
-            Log.d(LOG_TAG, "::::::::::::::::::::::::::::::::::::::::::::::::" + currentPosition);
-            exoPlayer.release();
-
             if (!mIsError) {
+                String duration = String.valueOf(mExoPlayer.getDuration());
+                String currentPosition = String.valueOf(mExoPlayer.getCurrentPosition());
+
+                Log.d(LOG_TAG, "::::::::::::::::::::::::::::::::::::::::::::::::" + duration);
+                Log.d(LOG_TAG, "::::::::::::::::::::::::::::::::::::::::::::::::" + currentPosition);
                 JSONObject jsonMediaInfoObject = new JSONObject();
                 jsonMediaInfoObject.put("duration", duration);
                 jsonMediaInfoObject.put("currentPosition", currentPosition);
@@ -272,6 +269,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
                     mMediaPlayerObject.send(CODE_ERROR,"MediaPlayer Initialize Not Yet");
                 }
             }
+
+            exoPlayer.release();
         }
         mExoPlayer = null;
     }

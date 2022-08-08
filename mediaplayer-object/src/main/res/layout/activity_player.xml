@@ -22,16 +22,28 @@ limitations under the License. -->
       android:layout_width="match_parent"
       android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/button"
-        style="?android:borderlessButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#00ff0000"
-        android:text="PIPMODE"
-        android:textColor="#FFFFFF"
-        android:visibility="visible"
-        tools:visibility="visible" />
+<!--    <Button-->
+<!--        android:id="@+id/button"-->
+<!--        style="?android:borderlessButtonStyle"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="#00ff0000"-->
+<!--        android:text="PIPMODE"-->
+<!--        android:textColor="#FFFFFF"-->
+<!--        android:visibility="visible"-->
+<!--        tools:visibility="visible" />-->
+
+
+      <ImageView
+          android:id="@+id/button"
+          android:layout_width="25dp"
+          android:layout_height="25dp"
+          android:layout_marginLeft="10dp"
+          android:layout_marginTop="10dp"
+          android:contentDescription="PipMode"
+          android:src="@drawable/ic_baseline_picture_in_picture_alt_24"
+
+          android:visibility="visible" />
 
   </com.google.android.exoplayer2.ui.StyledPlayerView>
 
