@@ -5,20 +5,17 @@ import static com.google.android.exoplayer2.Player.STATE_BUFFERING;
 import static com.google.android.exoplayer2.Player.STATE_ENDED;
 import static com.google.android.exoplayer2.Player.STATE_IDLE;
 import static com.google.android.exoplayer2.Player.STATE_READY;
-import static com.nexacro.deviceAPI.BluetoothLEConstants.TAG;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_ERROR;
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_SUCCESS;
 
 import android.annotation.SuppressLint;
 import android.app.PictureInPictureParams;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Rational;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -28,21 +25,19 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.ui.PlayerControlView;
-import com.google.android.exoplayer2.ui.StyledPlayerControlView;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
-import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.tobesoft.plugin.mediaplayerobject.databinding.ActivityPlayerBinding;
 import com.tobesoft.plugin.mediaplayerobject.plugininterface.Define;
+import com.tobesoft.plugin.mediaplayerobject.util.AnimationUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
 
-public class MediaPlayerActivity extends AppCompatActivity   {
+public class MediaPlayerActivity extends AppCompatActivity {
 
     private ExoPlayer mExoPlayer = null;
     private boolean mPlayWhenReady = true;
@@ -85,8 +80,8 @@ public class MediaPlayerActivity extends AppCompatActivity   {
         mIsMediaResourceTypeFile = extraParam.getBoolean(Define.ConstString.PARAM_MEDIA_RESOURCE_TYPE);
 
         binding = ActivityPlayerBinding.inflate(getLayoutInflater());
-        binding.button.bringToFront();
-        binding.button.setOnClickListener(new View.OnClickListener() {
+        binding.pipButton.bringToFront();
+        binding.pipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onPipMode();
@@ -215,7 +210,6 @@ public class MediaPlayerActivity extends AppCompatActivity   {
         mExoPlayer.addListener(playbackStateListener());
 
         mExoPlayer.prepare();
-
     }
 
 
@@ -238,19 +232,13 @@ public class MediaPlayerActivity extends AppCompatActivity   {
         mExoPlayer.setPlayWhenReady(mPlayWhenReady);
         mExoPlayer.seekTo(mCurrentItem, mPlaybackPosition);
         mExoPlayer.setVideoScalingMode(VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+
         //mExoPlayer.addAnalyticsListener(new EventLogger());
         mExoPlayer.addListener(playbackStateListener());
-        //mExoPlayer.setVisi
-        //mExoPlayer.addListener(playErrorException());
-
         mExoPlayer.getCurrentManifest();
+
         mExoPlayer.prepare();
 
-        binding.button.bringToFront();
-
-        binding.videoView.setVisibility(View.INVISIBLE);
-
-        //onPipMode();
 
     }
 
@@ -322,30 +310,34 @@ public class MediaPlayerActivity extends AppCompatActivity   {
         };
     }
 
-    public StyledPlayerView.ControllerVisibilityListener customControllerVisibilityListener() {
+    private StyledPlayerView.ControllerVisibilityListener customControllerVisibilityListener() {
         return new StyledPlayerView.ControllerVisibilityListener() {
             @Override
             public void onVisibilityChanged(int visibility) {
-                if (visibility == View.GONE) {
-                    Log.d(LOG_TAG,"::::::::::::::::컨트롤러 사라짐");
-                    binding.button.setVisibility(View.INVISIBLE);
+                if (!mIsAlreadyPip) {
+                    if (visibility == View.GONE) {
+                        Log.d(LOG_TAG, "::::::::::::::::컨트롤러 사라짐");
+                        //binding.pipButton.setVisibility(View.INVISIBLE);
+                        AnimationUtils.slideDown(binding.pipButton);
+                    } else {
+                        binding.pipButton.setVisibility(View.VISIBLE);
+                    }
                 } else {
-                    binding.button.setVisibility(View.VISIBLE);
+                    binding.pipButton.setVisibility(View.INVISIBLE);
                 }
             }
         };
     }
 
-
-    public void onPipMode() {
+    private void onPipMode() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
             mPipBuilder = new PictureInPictureParams.Builder();
             mPipBuilder.setAspectRatio(new Rational(binding.videoView.getWidth(), binding.videoView.getHeight()));
             this.enterPictureInPictureMode();
 
             mIsAlreadyPip = true;
             mMediaPlayerObject.mIsPipMode = true;
+
         }
     }
 
@@ -353,9 +345,11 @@ public class MediaPlayerActivity extends AppCompatActivity   {
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             if (isInPictureInPictureMode()) {
-                binding.button.setVisibility(View.GONE);
+                mIsAlreadyPip = isInPictureInPictureMode;
+                binding.pipButton.setVisibility(View.INVISIBLE);
             } else {
-                binding.button.setVisibility(View.VISIBLE);
+                mIsAlreadyPip = false;
+                binding.pipButton.setVisibility(View.VISIBLE);
             }
         }
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);

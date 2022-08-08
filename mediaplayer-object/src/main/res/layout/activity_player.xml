@@ -25,15 +25,27 @@ limitations under the License. -->
       >
 
       <ImageView
-          android:id="@+id/button"
+          android:id="@+id/pip_button"
           android:layout_width="25dp"
           android:layout_height="25dp"
-          android:layout_marginStart="10dp"
-          android:layout_marginTop="10dp"
+          android:layout_marginRight="75dp"
+          android:layout_marginBottom="17dp"
+          android:layout_gravity="bottom|right"
           android:contentDescription="@string/pipmode"
           android:src="@drawable/ic_baseline_picture_in_picture_alt_24"
+          android:visibility="visible"
+          tools:ignore="RtlHardcoded" />
 
-          android:visibility="visible" />
+<!--      <ImageView-->
+<!--          android:id="@+id/resize_screen_btn"-->
+<!--          android:layout_width="25dp"-->
+<!--          android:layout_height="25dp"-->
+<!--          android:layout_marginRight="115dp"-->
+<!--          android:layout_marginBottom="17dp"-->
+<!--          android:layout_gravity="bottom|right"-->
+<!--          android:src="@drawable/ic_baseline_fullscreen_24"-->
+<!--          android:visibility="visible"-->
+<!--          tools:ignore="RtlHardcoded" />-->
 
   </com.google.android.exoplayer2.ui.StyledPlayerView>
 
