@@ -56,6 +56,7 @@ public class MediaPlayerObject extends NexacroPlugin {
     MediaPlayerInterface mMediaPlayerInterface = null;
     Activity mActivity = null;
 
+
     private static MediaPlayerObject mMediaPlayerObject;
 
     public static MediaPlayerObject getInstance() {
@@ -70,7 +71,6 @@ public class MediaPlayerObject extends NexacroPlugin {
         mActivity = NexacroActivity.getInstance();
 
         mMediaPlayerObject = this;
-
     }
 
 
@@ -161,7 +161,7 @@ public class MediaPlayerObject extends NexacroPlugin {
         Intent intent = new Intent(mActivity, MediaPlayerActivity.class);
         intent.putExtras(extraParam);
 
-        mActivity.startActivityForResult(intent, MEDIA_ACTIVITY_REQUEST);
+        mActivity.startActivity(intent);
     }
 
     public void playByFile(String filePath, String mediaStartTime, String hideSystemUI) {
@@ -182,7 +182,7 @@ public class MediaPlayerObject extends NexacroPlugin {
         Intent intent = new Intent(mActivity, MediaPlayerActivity.class);
         intent.putExtras(extraParam);
 
-        mActivity.startActivityForResult(intent, MEDIA_ACTIVITY_REQUEST);
+        mActivity.startActivity(intent);
     }
 
 
@@ -221,25 +221,25 @@ public class MediaPlayerObject extends NexacroPlugin {
         return result;
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == MEDIA_ACTIVITY_REQUEST) {
-            if (intent != null) {
-                JSONObject jsonMediaInfoObject = new JSONObject();
-                if (resultCode == RESULT_CANCELED) {
-                    String errorInfo = intent.getExtras().getString("error");
-                    send(CODE_ERROR, METHOD_CALLMETHOD + " : " + errorInfo);
-                }
-                try {
-                    jsonMediaInfoObject.put("duration", intent.getExtras().getString("duration"));
-                    jsonMediaInfoObject.put("currentPosition", intent.getExtras().getString("currentPosition"));
-
-                    send(CODE_SUCCESS, jsonMediaInfoObject);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+//    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+//        if (requestCode == MEDIA_ACTIVITY_REQUEST) {
+//            if (intent != null) {
+//                JSONObject jsonMediaInfoObject = new JSONObject();
+//                if (resultCode == RESULT_CANCELED) {
+//                    String errorInfo = intent.getExtras().getString("error");
+//                    send(CODE_ERROR, METHOD_CALLMETHOD + " : " + errorInfo);
+//                }
+//                try {
+//                    jsonMediaInfoObject.put("duration", intent.getExtras().getString("duration"));
+//                    jsonMediaInfoObject.put("currentPosition", intent.getExtras().getString("currentPosition"));
+//
+//                    send(CODE_SUCCESS, jsonMediaInfoObject);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {

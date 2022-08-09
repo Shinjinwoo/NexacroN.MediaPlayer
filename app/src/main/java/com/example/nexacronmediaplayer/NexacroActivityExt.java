@@ -36,11 +36,11 @@ public class NexacroActivityExt extends NexacroActivity implements MediaPlayerIn
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if (mMediaPlayerObject.isActivityResult(requestCode)) {
-            if (mMediaPlayerObject != null) {
-                mMediaPlayerObject.onActivityResult(requestCode, resultCode, intent);
-            }
-        }
+//        if (mMediaPlayerObject.isActivityResult(requestCode)) {
+//            if (mMediaPlayerObject != null) {
+//                mMediaPlayerObject.onActivityResult(requestCode, resultCode, intent);
+//            }
+//        }
     }
 
     //======================= MediaPlayer 연동 코드 =========================

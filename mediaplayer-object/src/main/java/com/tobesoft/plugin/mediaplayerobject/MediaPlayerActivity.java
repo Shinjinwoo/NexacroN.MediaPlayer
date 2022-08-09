@@ -344,7 +344,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
             mIsAlreadyPip = true;
             mMediaPlayerObject.mIsPipMode = true;
-
         }
     }
 
