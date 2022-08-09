@@ -16,6 +16,7 @@ import android.util.Rational;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -77,6 +78,14 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mPlaybackPosition = extraParam.getLong(Define.ConstString.PARAM_MEDIA_START_TIME, 0L);
         mIsWantToHideSystemUI = extraParam.getBoolean(Define.ConstString.PARAM_HIDE_SYSTEM_UI, false);
         mIsMediaResourceTypeFile = extraParam.getBoolean(Define.ConstString.PARAM_MEDIA_RESOURCE_TYPE);
+
+
+        // 액션바 숨기기
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+
 
         binding = ActivityPlayerBinding.inflate(getLayoutInflater());
         binding.pipButton.bringToFront();

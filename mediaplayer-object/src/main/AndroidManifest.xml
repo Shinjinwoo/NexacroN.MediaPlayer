@@ -7,7 +7,6 @@
         <activity
             android:name=".MediaPlayerActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode|orientation|smallestScreenSize"
-            android:theme="@style/PlayerTheme"
             android:supportsPictureInPicture="true"
             android:launchMode="singleTask"
             android:exported="true"
