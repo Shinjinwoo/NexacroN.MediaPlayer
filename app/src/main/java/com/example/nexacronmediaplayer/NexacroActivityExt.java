@@ -32,36 +32,26 @@ public class NexacroActivityExt extends NexacroActivity implements MediaPlayerIn
         super.onDestroy();
     }
 
-    /* BioMetric 연동 코드 ****************************************************************************/
-    // private BiometricObject mBiometricObject;
 
-    //    @Override
-//    public void setBiometricObject(BiometricObject obj) {
-//        this.mBiometricObject = obj;
-//    }
-//
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-//        if (mBiometricObject.isActivityResult(requestCode)) {
-//            if (mBiometricObject != null) {
-//                mBiometricObject.onActivityResult(requestCode, resultCode, intent);
-//            }
-//        } else
         if (mMediaPlayerObject.isActivityResult(requestCode)) {
             if (mMediaPlayerObject != null) {
                 mMediaPlayerObject.onActivityResult(requestCode, resultCode, intent);
             }
         }
     }
-    /* BioMetric 연동 코드 ****************************************************************************/
 
+    //======================= MediaPlayer 연동 코드 =========================
     private MediaPlayerObject mMediaPlayerObject;
 
     @Override
     public void setMediaPlayerObject(MediaPlayerObject mediaplayerObject) {
         this.mMediaPlayerObject = mediaplayerObject;
     }
+    //======================================================================
+
 
 
     @Override

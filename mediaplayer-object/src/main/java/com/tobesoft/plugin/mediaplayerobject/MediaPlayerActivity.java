@@ -46,7 +46,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private ActivityPlayerBinding binding = null;
     private PictureInPictureParams.Builder mPipBuilder = null;
 
-    //public Long mIsWantToPlayerContinue = 0L;
     public Boolean mIsWantToHideSystemUI = false;
     private Boolean mIsError = false;
     private String mErrorMsg = "";
@@ -317,7 +316,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 if (!mIsAlreadyPip) {
                     if (visibility == View.GONE) {
                         Log.d(LOG_TAG, "::::::::::::::::컨트롤러 사라짐");
-                        //binding.pipButton.setVisibility(View.INVISIBLE);
                         AnimationUtils.slideDown(binding.pipButton);
                     } else {
                         binding.pipButton.setVisibility(View.VISIBLE);

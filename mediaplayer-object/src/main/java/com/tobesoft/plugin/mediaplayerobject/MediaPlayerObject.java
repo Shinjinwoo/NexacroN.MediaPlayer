@@ -15,10 +15,8 @@ import android.util.Patterns;
 
 import com.kh.plugin.plugincommonlib.info.PermissionRequest;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.kh.plugin.plugincommonlib.util.PermissionUtil;
 import com.nexacro.NexacroActivity;
@@ -47,11 +45,6 @@ public class MediaPlayerObject extends NexacroPlugin {
 
     private final static String LOG_TAG = "MediaPlayerObject";
 
-//    public static final String PARAM_MEDIA_RESOURCE_TYPE = "mediaTypeFile";
-//    public static final String PARAM_MEDIA_RESOURCE = "data";
-//    public static final String PARAM_MEDIA_START_TIME = "startTime";
-//    public static final String PARAM_HIDE_SYSTEM_UI = "hideSystemUI";
-
 
     public String mServiceId = "";
     public Boolean mIsMediaResourceTypeFile = false;
@@ -75,7 +68,6 @@ public class MediaPlayerObject extends NexacroPlugin {
         mMediaPlayerInterface = (MediaPlayerInterface) NexacroActivity.getInstance();
         mMediaPlayerInterface.setMediaPlayerObject(this);
         mActivity = NexacroActivity.getInstance();
-        //requestPermissionForMediaPlayer();
 
         mMediaPlayerObject = this;
 
@@ -109,7 +101,6 @@ public class MediaPlayerObject extends NexacroPlugin {
                     List<String> permissions = new ArrayList<>();
                     permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
 
-                    //장수석님 퍼미션 유틸
                     List<String> requestPermissions = PermissionUtil.hasPermissions(mActivity, permissions);
 
                     if (!requestPermissions.isEmpty()) {
@@ -249,16 +240,6 @@ public class MediaPlayerObject extends NexacroPlugin {
             }
         }
     }
-
-//    public static boolean isRequestPermissionsResult(int requestCode) {
-//        boolean result = false;
-//        switch(requestCode) {
-//            case PermissionRequest.MEDIAPLAYER_PERMISION_REQUST:
-//                result = true;
-//                break;
-//        }
-//        return result;
-//    }
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
