@@ -22,6 +22,7 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
@@ -143,6 +144,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
                 mIsError = false;
                 mErrorMsg = "";
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -188,6 +190,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
                 mIsError = false;
                 mErrorMsg = "";
+
+                finish();
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -314,6 +318,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 mIsError = true;
                 mErrorMsg = "Error Message : " + error.getMessage() + "\nError StackTrace : " + Arrays.toString(error.getStackTrace());
                 Player.Listener.super.onPlayerError(error);
+
+                finish();
             }
         };
     }
