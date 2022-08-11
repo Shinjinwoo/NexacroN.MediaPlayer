@@ -58,9 +58,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private Boolean mIsMediaResourceTypeFile = false;
 
 
-    public static final String DEFAULT_FILEPATH = "file://";
-
-
+    private static final String DEFAULT_FILEPATH = "file://";
     private final static String LOG_TAG = "MediaPlayerActivity";
 
     public MediaPlayerObject mMediaPlayerObject = null;
