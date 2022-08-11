@@ -48,17 +48,18 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private ActivityPlayerBinding binding = null;
     private PictureInPictureParams.Builder mPipBuilder = null;
 
-    public Boolean mIsWantToHideSystemUI = false;
+    private Boolean mIsWantToHideSystemUI = false;
     private Boolean mIsError = false;
     private String mErrorMsg = "";
     private Boolean mIsAlreadyPip = false;
 
+    private String mResource = "";
+    private Long mStartTime = 0L;
+    private Boolean mIsMediaResourceTypeFile = false;
+
 
     public static final String DEFAULT_FILEPATH = "file://";
 
-    public String mResource = "";
-    public Long mStartTime = 0L;
-    public Boolean mIsMediaResourceTypeFile = false;
 
     private final static String LOG_TAG = "MediaPlayerActivity";
 
@@ -253,8 +254,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mExoPlayer.getCurrentManifest();
 
         mExoPlayer.prepare();
-
-
     }
 
     private void releasePlayer() throws JSONException {
