@@ -15,5 +15,5 @@ dependencyResolutionManagement {
 rootProject.name = "NexacroN.MediaPlayer"
 include ':app'
 
-//include ":mediaplayer-object"
-//project(":mediaplayer-object").projectDir = file("D:/Android/Project/NexacroN/NexacroN.MediaPlayer/mediaplayer-object");
+include ":mediaplayer-object"
+project(":mediaplayer-object").projectDir = file("D:/Android/Project/NexacroN/NexacroN.MediaPlayer/mediaplayer-object");

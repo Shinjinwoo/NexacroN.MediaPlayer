@@ -130,8 +130,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mPipBuilder = null;
         mMediaPlayerObject.mIsPipMode = false;
 
-        mResource = null;
-        mStartTime = 0L;
+//        mResource = null;
+//        mStartTime = 0L;
         super.onStop();
     }
 
