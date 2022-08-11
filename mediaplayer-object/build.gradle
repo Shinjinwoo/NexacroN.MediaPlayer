@@ -9,8 +9,10 @@ android {
         minSdk 21
         targetSdk 32
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
+        versionCode 1
+        versionName "1.0.0"
+        project.archivesBaseName = project.name+'-'+android.defaultConfig.versionName
+
     }
 
     buildTypes {
@@ -33,7 +35,6 @@ android {
 dependencies {
 
     compileOnly 'com.google.android.material:material:1.6.1'
-    compileOnly 'androidx.constraintlayout:constraintlayout:2.1.4'
     compileOnly 'androidx.appcompat:appcompat:1.4.2'
     compileOnly 'androidx.multidex:multidex:2.0.1'
     compileOnly files('libs/nexacro.aar')

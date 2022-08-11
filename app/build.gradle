@@ -51,6 +51,9 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.1'
     implementation 'com.google.android.exoplayer:exoplayer-hls:2.18.1'
 
-    implementation project(path: ':mediaplayer-object')
+    //프로젝트 Path로 연동
+    //implementation project(path: ':mediaplayer-object')
 
+    //AAR 아카이브로 연동
+    implementation files('libs/mediaplayer-object-1.0.0-release.aar')
 }
