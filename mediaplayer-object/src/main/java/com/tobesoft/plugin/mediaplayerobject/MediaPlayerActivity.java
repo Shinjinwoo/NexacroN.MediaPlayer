@@ -68,7 +68,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mMediaPlayerObject = MediaPlayerObject.getInstance();
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,7 +110,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 } else {
                     initializePlayer(mResource);
                 }
-
             }
         }
         super.onStart();
@@ -132,6 +130,9 @@ public class MediaPlayerActivity extends AppCompatActivity {
         }
         mPipBuilder = null;
         mMediaPlayerObject.mIsPipMode = false;
+
+        mResource = null;
+        mStartTime = 0L;
         super.onStop();
     }
 
@@ -151,6 +152,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
         }
         mPipBuilder = null;
         mMediaPlayerObject.mIsPipMode = false;
+        mResource = null;
+        mStartTime = 0L;
 
         super.onDestroy();
     }
