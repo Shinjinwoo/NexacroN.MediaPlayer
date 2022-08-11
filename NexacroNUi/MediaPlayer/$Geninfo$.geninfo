@@ -9,21 +9,6 @@
       <Script rule_version="1.02"/>
       <GeneratorInfo rule_version="1.2"/>
     </Rule>
-    <Info project="D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\" generated="C:\Users\tobesoft\Documents\TOBESOFT\Nexacro N\outputs\MediaPlayer\">
-      <File url="environment.xml" checksum="20220803112637" errormsg=""/>
-      <File url="typedefinition.xml" checksum="20220725154101" errormsg=""/>
-      <File url="appvariables.xml" checksum="20220720093351" errormsg=""/>
-      <File url="_resource_\_theme_\blue\theme.xcss" checksum="20220720093351" errormsg=""/>
-      <File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\resources\Resource.json" checksum="20220628093826" errormsg=""/>
-      <File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\component\MediaPlayer.json" checksum="20220720095236" errormsg=""/>
-      <File url="Application_Phone.xadl" checksum="20220720094550" errormsg=""/>
-      <File url="FrameBase\Form_Work.xfdl" checksum="20220808154051" errormsg=""/>
-      <File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\framework\Framework.json" checksum="20220628093824" errormsg=""/>
-      <File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\component\CompBase.json" checksum="20220628093818" errormsg=""/>
-      <File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\component\ComComp.json" checksum="20220628093818" errormsg=""/>
-      <File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\component\Grid.json" checksum="20220628093820" errormsg=""/>
-      <File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\component\ListView.json" checksum="20220628093826" errormsg=""/>
-      <File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\component\DeviceAPI.json" checksum="20220628093820" errormsg=""/>
-    </Info>
+    <Info project="D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\" generated="C:\Users\tobesoft\Documents\TOBESOFT\Nexacro N\outputs\MediaPlayer\"><File url="environment.xml" checksum="20220803112637" errormsg=""/><File url="typedefinition.xml" checksum="20220725154101" errormsg=""/><File url="appvariables.xml" checksum="20220720093351" errormsg=""/><File url="_resource_\_theme_\blue\theme.xcss" checksum="20220720093351" errormsg=""/><File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\resources\Resource.json" checksum="20220628093826" errormsg=""/><File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\component\MediaPlayer.json" checksum="20220720095236" errormsg=""/><File url="Application_Phone.xadl" checksum="20220720094550" errormsg=""/><File url="FrameBase\Form_Work.xfdl" checksum="20220811095911" errormsg=""/><File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\framework\Framework.json" checksum="20220628093824" errormsg=""/><File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\component\CompBase.json" checksum="20220628093818" errormsg=""/><File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\component\ComComp.json" checksum="20220628093818" errormsg=""/><File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\component\Grid.json" checksum="20220628093820" errormsg=""/><File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\component\ListView.json" checksum="20220628093826" errormsg=""/><File url="C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\component\DeviceAPI.json" checksum="20220628093820" errormsg=""/></Info>
   </GenInfo>
 </root>
