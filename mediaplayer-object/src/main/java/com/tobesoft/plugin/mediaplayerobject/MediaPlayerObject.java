@@ -32,6 +32,7 @@ import java.util.List;
 
 public class MediaPlayerObject extends NexacroPlugin {
 
+
     private static final String SVCID = "svcid";
     private static final String REASON = "reason";
     private static final String RETVAL = "returnvalue";
@@ -69,6 +70,8 @@ public class MediaPlayerObject extends NexacroPlugin {
         mMediaPlayerInterface = (MediaPlayerInterface) NexacroActivity.getInstance();
         mMediaPlayerInterface.setMediaPlayerObject(this);
         mActivity = NexacroActivity.getInstance();
+
+        Log.d(LOG_TAG,"MediaPlayer Object 생성자 Call");
 
         mMediaPlayerObject = this;
     }
