@@ -9,9 +9,12 @@ import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_ERROR
 import static com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject.CODE_SUCCESS;
 
 import android.annotation.SuppressLint;
+import android.app.AppOpsManager;
 import android.app.PictureInPictureParams;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Process;
 import android.util.Rational;
 import android.view.View;
 
@@ -47,6 +50,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private Long mPlaybackPosition = 0L;
     private ActivityPlayerBinding binding = null;
     private PictureInPictureParams.Builder mPipBuilder = null;
+
 
     private Boolean mIsWantToHideSystemUI = false;
     private Boolean mIsError = false;
@@ -87,13 +91,19 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
 
         binding = ActivityPlayerBinding.inflate(getLayoutInflater());
-        binding.pipButton.bringToFront();
-        binding.pipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onPipMode();
-            }
-        });
+
+        if (hasPipPermission()) {
+            binding.pipButton.bringToFront();
+            binding.pipButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onPipMode();
+                }
+            });
+        } else {
+            binding.pipButton.setVisibility(View.INVISIBLE);
+        }
+
         setContentView(binding.getRoot());
     }
 
@@ -328,7 +338,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         return new StyledPlayerView.ControllerVisibilityListener() {
             @Override
             public void onVisibilityChanged(int visibility) {
-                if (!mIsAlreadyPip) {
+                if (!mIsAlreadyPip && hasPipPermission()) {
                     if (visibility == View.GONE) {
                         Log.d(LOG_TAG, "::::::::::::::::컨트롤러 사라짐");
                         AnimationUtils.slideDown(binding.pipButton);
@@ -344,14 +354,35 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
     private void onPipMode() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mPipBuilder = new PictureInPictureParams.Builder();
-            mPipBuilder.setAspectRatio(new Rational(binding.videoView.getWidth(), binding.videoView.getHeight()));
-            this.enterPictureInPictureMode();
+            if (hasPipPermission()) {
+                mPipBuilder = new PictureInPictureParams.Builder();
+                mPipBuilder.setAspectRatio(new Rational(binding.videoView.getWidth(), binding.videoView.getHeight()));
+                this.enterPictureInPictureMode();
 
-            mIsAlreadyPip = true;
-            mMediaPlayerObject.mIsPipMode = true;
+                mIsAlreadyPip = true;
+                mMediaPlayerObject.mIsPipMode = true;
+            } else {
+                mMediaPlayerObject.send( CODE_ERROR,"Permission Denied : Disable PIP MODE");
+            }
         }
     }
+
+    private boolean hasPipPermission() {
+        AppOpsManager appOps = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (appOps != null) {
+                    return appOps.unsafeCheckOpNoThrow("android:picture_in_picture", Process.myUid(), this.getPackageName()) == AppOpsManager.MODE_ALLOWED;
+                }
+            } else {
+                if (appOps != null) {
+                    return appOps.checkOpNoThrow("android:picture_in_picture", Process.myUid(), this.getPackageName()) == AppOpsManager.MODE_ALLOWED;
+                }
+            }
+        } return false;
+    }
+
+
 
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
