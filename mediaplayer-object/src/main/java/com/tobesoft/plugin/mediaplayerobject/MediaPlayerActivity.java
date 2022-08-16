@@ -372,11 +372,11 @@ public class MediaPlayerActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 if (appOps != null) {
-                    return appOps.unsafeCheckOpNoThrow("android:picture_in_picture", Process.myUid(), this.getPackageName()) == AppOpsManager.MODE_ALLOWED;
+                    return appOps.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_PICTURE_IN_PICTURE, Process.myUid(), this.getPackageName()) == AppOpsManager.MODE_ALLOWED;
                 }
             } else {
                 if (appOps != null) {
-                    return appOps.checkOpNoThrow("android:picture_in_picture", Process.myUid(), this.getPackageName()) == AppOpsManager.MODE_ALLOWED;
+                    return appOps.checkOpNoThrow(AppOpsManager.OPSTR_PICTURE_IN_PICTURE, Process.myUid(), this.getPackageName()) == AppOpsManager.MODE_ALLOWED;
                 }
             }
         } return false;
