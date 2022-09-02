@@ -153,7 +153,7 @@ public class MediaPlayerObject extends NexacroPlugin {
 
         extraParam.putString(Define.ConstString.PARAM_MEDIA_RESOURCE, urlPath);
         extraParam.putBoolean(Define.ConstString.PARAM_MEDIA_RESOURCE_TYPE, mIsMediaResourceTypeFile);
-        if (!mediaStartTime.equals("false")) {
+        if (!mediaStartTime.equals("0")) {
             extraParam.putLong(Define.ConstString.PARAM_MEDIA_START_TIME, Long.parseLong(mediaStartTime));
         }
 
