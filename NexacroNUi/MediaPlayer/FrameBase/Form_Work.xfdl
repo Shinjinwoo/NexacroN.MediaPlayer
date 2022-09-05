@@ -44,6 +44,8 @@ var currentPosition;
 this.Form_Work_onload = function(obj:nexacro.Form,e:nexacro.LoadEventInfo)
 {
 	//하나의 인스턴스를 바라보게 하는 법 : 글로벌 스크립트단 or 부모.
+	//MediaPlayer + Plugin 붙이기
+	
 	this.addChild("MediaPlayer",new nexacro.MediaPlayer());
 	this.MediaPlayer.addEventHandler("oncallback", this.on_MediaPlayer_callback,this);
 	

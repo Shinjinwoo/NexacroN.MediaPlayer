@@ -19,7 +19,6 @@ import android.util.Rational;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
@@ -32,7 +31,6 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
-import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.tobesoft.plugin.mediaplayerobject.databinding.ActivityPlayerBinding;
@@ -43,8 +41,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MediaPlayerActivity extends AppCompatActivity {
 
@@ -216,41 +212,13 @@ public class MediaPlayerActivity extends AppCompatActivity {
     }
 
 
-    TimerTask mTimerTask;
-    Timer mTimer;
-
     private void initializePlayer(String mediaResource) {
         mExoPlayer = new ExoPlayer.Builder(this)
                 .build();
 
         MediaItem mediaItem = null;
         binding.videoView.setPlayer(mExoPlayer);
-
-        mTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                if (binding.videoView.isControllerFullyVisible()) {
-                                    binding.videoView.hideController();
-                                    AnimationUtils.slideDown(binding.pipButton);
-                                } else {
-                                    binding.videoView.showController();
-                                    binding.pipButton.setVisibility(View.VISIBLE);
-                                    AnimationUtils.slideUp(binding.pipButton);
-                                }
-                            }
-                        }
-                );
-            }
-        };
-
-        mTimer = new Timer();
-        mTimer.schedule(mTimerTask, 30000);
-
-//        binding.videoView.setControllerVisibilityListener(customControllerVisibilityListener());
+        binding.videoView.setControllerVisibilityListener(customControllerVisibilityListener());
 
         if (mIsMediaResourceTypeFile) {
             mediaItem = MediaItem.fromUri(DEFAULT_FILEPATH + mediaResource);
@@ -263,9 +231,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mExoPlayer.seekTo(mCurrentItem, mPlaybackPosition);
         mExoPlayer.setVideoScalingMode(VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
         //mExoPlayer.addAnalyticsListener(new EventLogger());
-        mExoPlayer.addListener(
-
-                playbackStateListener());
+        mExoPlayer.addListener(playbackStateListener());
 
         mExoPlayer.prepare();
     }
@@ -277,7 +243,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
         MediaItem mediaItem = null;
         binding.videoView.setPlayer(mExoPlayer);
-        //binding.videoView.setControllerVisibilityListener(customControllerVisibilityListener());
+        binding.videoView.setControllerVisibilityListener(customControllerVisibilityListener());
+
 
         if (mIsMediaResourceTypeFile) {
             mediaItem = MediaItem.fromUri(DEFAULT_FILEPATH + mediaResource);
@@ -356,12 +323,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 Player.Listener.super.onPlaybackStateChanged(playbackState);
             }
 
-
-            /**
-             *
-             * TODO : PIP 버튼 동작 관련해서 터치 관련한 이벤트 리스너 분석으로 싱크 맞춰보기.
-             */
-
             @Override
             public void onPlayerError(@NonNull PlaybackException error) {
                 mIsError = true;
@@ -380,9 +341,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 if (!mIsAlreadyPip && hasPipPermission()) {
                     if (visibility == View.GONE) {
                         Log.d(LOG_TAG, "::::::::::::::::컨트롤러 사라짐");
-                        // AnimationUtils.slideDown(binding.pipButton);
-
-
+                        //AnimationUtils.slideDown(binding.pipButton);
                         binding.pipButton.setVisibility(View.INVISIBLE);
                     } else {
                         binding.pipButton.setVisibility(View.VISIBLE);
@@ -404,7 +363,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 mIsAlreadyPip = true;
                 mMediaPlayerObject.mIsPipMode = true;
             } else {
-                mMediaPlayerObject.send(CODE_ERROR, "Permission Denied : Disable PIP MODE");
+                mMediaPlayerObject.send( CODE_ERROR,"Permission Denied : Disable PIP MODE");
             }
         }
     }
@@ -421,9 +380,9 @@ public class MediaPlayerActivity extends AppCompatActivity {
                     return appOps.checkOpNoThrow(AppOpsManager.OPSTR_PICTURE_IN_PICTURE, Process.myUid(), this.getPackageName()) == AppOpsManager.MODE_ALLOWED;
                 }
             }
-        }
-        return false;
+        } return false;
     }
+
 
 
     @Override
