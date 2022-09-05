@@ -28,29 +28,19 @@ public class NexacroActivityExt extends NexacroActivity implements MediaPlayerIn
 
     @Override
     protected void onDestroy() {
-
         super.onDestroy();
     }
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-//        if (mMediaPlayerObject.isActivityResult(requestCode)) {
-//            if (mMediaPlayerObject != null) {
-//                mMediaPlayerObject.onActivityResult(requestCode, resultCode, intent);
-//            }
-//        }
-    }
-
-    //======================= MediaPlayer 연동 코드 =========================
+    /**
+     * MediaPlayerPlugin 연동 코드
+     **********************************************************************************************************/
     private MediaPlayerObject mMediaPlayerObject;
 
     @Override
     public void setMediaPlayerObject(MediaPlayerObject mediaplayerObject) {
         this.mMediaPlayerObject = mediaplayerObject;
     }
-    //======================================================================
 
 
 
@@ -60,6 +50,7 @@ public class NexacroActivityExt extends NexacroActivity implements MediaPlayerIn
         super.onRequestPermissionsResult(requestCode, permission, grantResults);
     }
 
+    /** MediaPlayerPlugin 연동 코드 ****************************************************************************/
 
 
 

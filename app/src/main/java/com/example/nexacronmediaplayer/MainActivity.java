@@ -20,9 +20,6 @@ public class MainActivity extends NexacroUpdatorActivity {
     }
 
 
-    private String LOG_TAG = this.getClass().toString();
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         NexacroResourceManager.createInstance(this);
