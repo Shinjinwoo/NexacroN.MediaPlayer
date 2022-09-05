@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin-config>
-    <plugin name="MediaPlayer" class="com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject"/>
+    <plugin name="MediaPlayerPlugin" class="com.tobesoft.plugin.mediaplayerobject.MediaPlayerObject"/>
 </plugin-config>
