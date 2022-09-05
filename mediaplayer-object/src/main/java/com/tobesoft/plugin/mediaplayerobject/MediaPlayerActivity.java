@@ -186,30 +186,30 @@ public class MediaPlayerActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    @Override
-    protected void onPause() {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                if (isInPictureInPictureMode()) {
-                    Log.d(LOG_TAG, "::::::::::is In Pip Mode");
-                } else {
-                    releasePlayer();
-                }
-            }
-
-            if (mIsError) {
-                mMediaPlayerObject.send(CODE_ERROR, mErrorMsg);
-
-                mIsError = false;
-                mErrorMsg = "";
-
-                finish();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        super.onPause();
-    }
+//    @Override
+//    protected void onPause() {
+//        try {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                if (isInPictureInPictureMode()) {
+//                    Log.d(LOG_TAG, "::::::::::is In Pip Mode");
+//                } else {
+//                    releasePlayer();
+//                }
+//            }
+//
+//            if (mIsError) {
+//                mMediaPlayerObject.send(CODE_ERROR, mErrorMsg);
+//
+//                mIsError = false;
+//                mErrorMsg = "";
+//
+//                finish();
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        super.onPause();
+//    }
 
 
     private void initializePlayer(String mediaResource) {
