@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FDL version="2.1">
+  <Form id="Form_Work" width="480" height="768" titletext="Form_Work" onload="Form_Work_onload">
+    <Layouts>
+      <Layout width="480" height="768" screenid="Phone_screen">
+        <TextArea id="TextArea00" taborder="1" left="10" top="10" height="330" right="10"/>
+        <Grid id="Grid00" taborder="5" left="10" top="TextArea00:10" height="100" binddataset="Dataset00" autofittype="col" right="10">
+          <Formats>
+            <Format id="default">
+              <Columns>
+                <Column size="80"/>
+                <Column size="80"/>
+                <Column size="50"/>
+              </Columns>
+              <Rows>
+                <Row size="24" band="head"/>
+                <Row size="24"/>
+              </Rows>
+              <Band id="head">
+                <Cell text="Duration"/>
+                <Cell col="1" text="CurrentPosition"/>
+                <Cell col="2" text="재생률"/>
+              </Band>
+              <Band id="body">
+                <Cell text="bind:Duration"/>
+                <Cell col="1" text="bind:CurrentPosition"/>
+                <Cell col="2" text="bind:MediaResourcePer"/>
+              </Band>
+            </Format>
+          </Formats>
+        </Grid>
+        <GroupBox id="GroupBox00" taborder="7" text="MediaPlayer" left="10" top="Grid00:10" right="10" bottom="75"/>
+        <CheckBox id="CheckBox00" taborder="4" text="시스템 UI 숨기기" left="30" top="490" onchanged="CheckBox00_onchanged" value="false" right="GroupBox00:-130" bottom="GroupBox00:-50"/>
+        <Button id="Button00" taborder="0" text="URI로 재생" left="30" top="CheckBox00:25" height="50" onclick="Button00_onclick" right="GroupBox00:-140"/>
+        <Button id="Button01" taborder="2" text="파일로 재생" left="Button00:30" top="CheckBox00:25" width="120" height="50" onclick="Button01_onclick"/>
+        <Button id="Button02" taborder="3" text="이어보기" left="Button01:30" onclick="Button02_onclick" height="50" top="CheckBox00:25" width="120"/>
+        <Button id="Button03" taborder="6" text="에러 테스트" left="180" top="610" width="120" height="50" onclick="Button03_onclick"/>
+        <Button id="Button04" taborder="8" text="응용 폼으로 이동" left="330" top="610" width="120" height="50" onclick="Button04_onclick"/>
+      </Layout>
+    </Layouts>
+    <Script type="xscript5.1"><![CDATA[var mIsHideSystemUI = false;
+var currentPosition;
+
+this.Form_Work_onload = function(obj:nexacro.Form,e:nexacro.LoadEventInfo)
+{
+	//하나의 인스턴스를 바라보게 하는 법 : 글로벌 스크립트단 or 부모.
+	//MediaPlayer + Plugin 붙이기
+	
+	this.addChild("MediaPlayer",new nexacro.MediaPlayer());
+	this.MediaPlayer.addEventHandler("oncallback", this.on_MediaPlayer_callback,this);
+	
+	
+	this.FileDialog00.set_accept("video/*" );
+	trace("::::::::::::::::::::::::::"+this.FileDialog00.accept);
+	
+	mIsHideSystemUI = this.CheckBox00.value;
+};
+
+this.on_MediaPlayer_callback = function(obj, e)
+{
+	trace("this.on_MediaPlayer_callback ::: "+e.svcid);
+	trace("this.on_MediaPlayer_callback ::: "+e.reason);
+	trace("this.on_MediaPlayer_callback ::: "+e.returnvalue.toString());
+	
+	this.TextArea00.set_value(
+	"Service ID : " + e.svcid + "\n" +
+	"Reason CODE : " + e.reason + "\n" +
+	"Return Msg : " + e.returnvalue + "\n" +
+	"Return duration : " + e.returnvalue.duration + "\n" +
+	"Return currentPosition : " + e.returnvalue.currentPosition
+	);
+	
+	var duration = e.returnvalue.duration;
+	currentPosition = e.returnvalue.currentPosition;
+	var mediaResourcePer = nexacro.round((currentPosition/duration)*100,1);
+	
+	this.Dataset00.clearData();
+	var nRow = this.Dataset00.addRow();
+	this.Dataset00.setColumn(nRow,"Duration",duration);
+	this.Dataset00.setColumn(nRow,"CurrentPosition",currentPosition);
+	this.Dataset00.setColumn(nRow,"MediaResourcePer",mediaResourcePer+"\%");
+};
+
+
+this.Button00_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	var param = {}
+	
+	//URI로만, URL : X / 
+	param.mediaResource = "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4";
+	param.hideSystemUI = mIsHideSystemUI;
+	
+	this.MediaPlayer.callMethod("mediaOpen",param);
+};
+
+
+this.Button02_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	var param = {}
+	
+	//동일한 URI 혹은 파일경로를 기반으로 미디어 리소스를 탑재 후 
+	//총재생 시간과 현재 재생시간을 콜백 받은걸 기반으로 이어보기가 가능합니다.
+	param.mediaResource = "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4";
+	param.hideSystemUI = mIsHideSystemUI;
+	
+	if ( currentPosition > 0 ) {
+		param.mediaStartTime = currentPosition;
+	}
+	
+	this.MediaPlayer.callMethod("mediaOpen",param);
+};
+
+
+this.Button01_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.FileDialog00.open("FileOpen", 1 );
+};
+
+this.FileDialog00_onclose = function(obj:nexacro.FileDialog,e:nexacro.FileDialogEventInfo)
+{
+	vFile = e.virtualfiles[0];
+	var param = {};
+		
+	param.mediaResource = vFile.fullpath;
+	param.hideSystemUI = mIsHideSystemUI;
+		
+	this.MediaPlayer.callMethod("mediaOpen",param);
+};
+
+
+this.CheckBox00_onchanged = function(obj:nexacro.CheckBox,e:nexacro.CheckBoxChangedEventInfo)
+{
+	if(e.postvalue == true){
+		mIsHideSystemUI = this.CheckBox00.value;
+	} else {
+		mIsHideSystemUI = this.CheckBox00.value;
+	}
+};
+
+this.Button03_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	var param = {};
+		
+	param.mediaResource = "abcd";
+	param.hideSystemUI = mIsHideSystemUI;
+		
+	this.MediaPlayer.callMethod("mediaOpen",param);
+};
+
+this.Button04_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.go("FrameBase::Sample_Form.xfdl");
+};
+]]></Script>
+    <Objects>
+      <FileDialog id="FileDialog00" onclose="FileDialog00_onclose"/>
+      <Dataset id="Dataset00">
+        <ColumnInfo>
+          <Column id="Duration" type="STRING" size="256"/>
+          <Column id="CurrentPosition" type="STRING" size="256"/>
+          <Column id="MediaResourcePer" type="STRING" size="256"/>
+        </ColumnInfo>
+      </Dataset>
+    </Objects>
+  </Form>
+</FDL>

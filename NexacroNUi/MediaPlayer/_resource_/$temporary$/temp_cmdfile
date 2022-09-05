@@ -1,0 +1,30 @@
+﻿-P
+"D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\MediaPlayer.xprj"
+-O
+"C:\Users\tobesoft\Documents\TOBESOFT\Nexacro N\outputs\MediaPlayer"
+-B
+"C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\"
+-FILE
+"'D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\environment.xml','D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\Application_Phone.xadl','D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\FrameBase\Form_Work.xfdl','D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\FrameBase\Sample_Form.xfdl','D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\_resource_\_theme_\blue'"
+-JSVERSION
+"ECMAScript 2015(ES6)"
+-BOOTSTRAP
+-MODULE
+-BROWSER
+NRE,Internet Explorer 11,Internet Explorer 10,Chrome,Safari,
+-D3
+"C:\Users\tobesoft\Documents\TOBESOFT\Nexacro N\deploy\MediaPlayer\_android_"
+-DB3
+"C:\Program Files (x86)\TOBESOFT\Nexacro N\SDK\21.0.0\nexacrolib\"
+-DT3
+4369
+-DF3
+"'D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\environment.xml','D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\Application_Phone.xadl','D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\FrameBase\Form_Work.xfdl','D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\FrameBase\Sample_Form.xfdl'"
+-MERGE
+-COMPRESS
+-IGNORECOMPRESS
+"D:\Android\Project\NexacroN\NexacroN.MediaPlayer\NexacroNUi\MediaPlayer\.ignorecompress"
+-SHRINK
+-RTL
+-Q
+73600

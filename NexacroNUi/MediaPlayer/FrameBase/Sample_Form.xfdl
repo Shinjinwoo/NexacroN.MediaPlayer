@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FDL version="2.1">
+  <Form id="Sample_Form" width="480" height="720" titletext="New Form" onload="Sample_Form_onload">
+    <Layouts>
+      <Layout height="720" width="480"/>
+    </Layouts>
+    <Script type="xscript5.1"><![CDATA[
+this.Sample_Form_onload = function(obj:nexacro.Form,e:nexacro.LoadEventInfo)
+{
+	var objApp = nexacro.getApplication() ;
+	
+	trace(objApp);
+	
+	//objApp.addChild("MediaPlayer",new nexacro.MediaPlayer());
+	
+};
+]]></Script>
+  </Form>
+</FDL>
