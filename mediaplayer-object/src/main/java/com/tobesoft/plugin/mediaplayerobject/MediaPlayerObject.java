@@ -69,7 +69,7 @@ public class MediaPlayerObject extends NexacroPlugin {
 
         mMediaPlayerInterface = (MediaPlayerInterface) NexacroActivity.getInstance();
         mMediaPlayerInterface.setMediaPlayerObject(this);
-        mActivity = NexacroActivity.getInstance();
+        mActivity = (Activity) NexacroActivity.getInstance();
 
         Log.d(LOG_TAG,"MediaPlayer Object 생성자 Call");
 

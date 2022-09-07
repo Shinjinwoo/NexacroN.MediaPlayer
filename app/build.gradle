@@ -43,13 +43,17 @@ dependencies {
 
     //메모리 누수 관련 덤프 분석 라이브러리.
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
-    implementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+    //implementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
 
 
     implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'
     implementation 'com.google.android.exoplayer:exoplayer-dash:2.18.1'
+
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.1'
+
     implementation 'com.google.android.exoplayer:exoplayer-hls:2.18.1'
+
+
 
     //프로젝트 Path로 연동
     implementation project(path: ':mediaplayer-object')

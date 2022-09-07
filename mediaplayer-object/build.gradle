@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 31
 
     defaultConfig {
         minSdk 21
-        targetSdk 32
+        targetSdk 31
 
         versionCode 1
         versionName "1.0.0"
@@ -35,17 +35,18 @@ android {
 dependencies {
 
     compileOnly 'com.google.android.material:material:1.6.1'
-    compileOnly 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
     compileOnly 'androidx.multidex:multidex:2.0.1'
+
     compileOnly files('libs/nexacro.aar')
     compileOnly files('libs/plugin-common-lib-2.5.3.jar');
 
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.18.1'
 
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.1'
 
-    compileOnly 'com.google.android.exoplayer:exoplayer-core:2.18.1'
-    compileOnly 'com.google.android.exoplayer:exoplayer-dash:2.18.1'
-    compileOnly 'com.google.android.exoplayer:exoplayer-ui:2.18.1'
-    compileOnly 'com.google.android.exoplayer:exoplayer-hls:2.18.1'
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.18.1'
 
 
 }

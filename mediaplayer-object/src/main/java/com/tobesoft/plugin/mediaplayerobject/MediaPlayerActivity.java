@@ -104,6 +104,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
             binding.pipButton.setVisibility(View.INVISIBLE);
         }
 
+
         setContentView(binding.getRoot());
     }
 
@@ -220,6 +221,10 @@ public class MediaPlayerActivity extends AppCompatActivity {
         binding.videoView.setPlayer(mExoPlayer);
         binding.videoView.setControllerVisibilityListener(customControllerVisibilityListener());
 
+
+
+
+
         if (mIsMediaResourceTypeFile) {
             mediaItem = MediaItem.fromUri(DEFAULT_FILEPATH + mediaResource);
         } else {
@@ -244,6 +249,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
         MediaItem mediaItem = null;
         binding.videoView.setPlayer(mExoPlayer);
         binding.videoView.setControllerVisibilityListener(customControllerVisibilityListener());
+
+
 
 
         if (mIsMediaResourceTypeFile) {
@@ -335,14 +342,20 @@ public class MediaPlayerActivity extends AppCompatActivity {
     }
 
     private StyledPlayerView.ControllerVisibilityListener customControllerVisibilityListener() {
+
         return new StyledPlayerView.ControllerVisibilityListener() {
             @Override
             public void onVisibilityChanged(int visibility) {
+
+                // binding.videoView.animate().cancel();
+
+
                 if (!mIsAlreadyPip && hasPipPermission()) {
                     if (visibility == View.GONE) {
                         Log.d(LOG_TAG, "::::::::::::::::컨트롤러 사라짐");
                         //AnimationUtils.slideDown(binding.pipButton);
                         binding.pipButton.setVisibility(View.INVISIBLE);
+
                     } else {
                         binding.pipButton.setVisibility(View.VISIBLE);
                     }
